@@ -1,0 +1,50 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#10b981', // emerald-400
+        },
+        success: '#22c55e', // green-500
+        error: '#ef4444',   // red-500
+        warning: '#eab308', // yellow-500
+      },
+      fontSize: {
+        'title': ['24px', {
+          lineHeight: '1.4',
+          fontWeight: '600',
+        }],
+        'subtitle': ['18px', {
+          lineHeight: '1.5',
+          fontWeight: '500',
+        }],
+        'body': ['14px', {
+          lineHeight: '1.6',
+          fontWeight: '400',
+        }],
+        'caption': ['12px', {
+          lineHeight: '1.5',
+          fontWeight: '400',
+        }],
+      },
+      spacing: {
+        'base': '4px',
+        'component': '16px',
+        'layout': '24px',
+        'section': '32px',
+      },
+      backdropBlur: {
+        'glass': '10px',
+      },
+      transitionDuration: {
+        'natural': '250ms',
+      },
+    },
+  },
+  plugins: [],
+} 

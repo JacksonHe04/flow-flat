@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import('@tailwindcss/postcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -39,7 +39,7 @@ export default {
         'section': '32px',
       },
       backdropBlur: {
-        'glass': '10px',
+        DEFAULT: '10px',
       },
       transitionDuration: {
         'natural': '250ms',

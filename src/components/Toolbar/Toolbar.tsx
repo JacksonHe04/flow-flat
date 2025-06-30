@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useNodeStore } from '../../stores/nodeStore';
+import { nodeTypes, type NodeTypeConfig } from '@/config/nodeTypes';
 
 interface ToolbarProps {
   onDeleteSelected: () => void;
@@ -10,6 +11,8 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
   const { addNode } = useNodeStore();
   const { zoomIn, zoomOut, fitView, getZoom } = useReactFlow();
   const [zoom, setZoom] = useState(getZoom());
+  const [selectedNodeType, setSelectedNodeType] = useState<NodeTypeConfig>(nodeTypes[0]);
+  const [showNodeTypeMenu, setShowNodeTypeMenu] = useState(false);
 
   // 监听缩放变化
   useEffect(() => {
@@ -23,18 +26,44 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
     return () => clearInterval(interval);
   }, [getZoom]);
 
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showNodeTypeMenu && !target.closest('.node-type-selector')) {
+        setShowNodeTypeMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNodeTypeMenu]);
+
   /**
    * 处理添加节点
    */
   const handleAddNode = () => {
     const newNode = {
       id: `node-${Date.now()}`,
-      type: 'richtext' as const,
+      type: 'customNode' as const,
       position: { x: 100, y: 100 },
       size: { width: 200, height: 150 },
-      data: { content: '新建节点' },
+      data: { 
+         nodeType: selectedNodeType.id,
+         title: selectedNodeType.name,
+         content: selectedNodeType.description 
+       },
     };
     addNode(newNode);
+    setShowNodeTypeMenu(false);
+  };
+
+  /**
+   * 处理选择节点类型
+   */
+  const handleSelectNodeType = (nodeType: NodeTypeConfig) => {
+    setSelectedNodeType(nodeType);
+    setShowNodeTypeMenu(false);
   };
 
   /**
@@ -46,6 +75,44 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
 
   return (
     <div className="flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-white/20 dark:border-slate-700/50 shadow-lg">
+      {/* 节点类型选择器 */}
+      <div className="relative node-type-selector">
+        <button
+          onClick={() => setShowNodeTypeMenu(!showNodeTypeMenu)}
+          className="btn btn-outline btn-sm flex items-center gap-2 min-w-[120px] justify-between"
+        >
+          <div className="flex items-center gap-2">
+             <span>{selectedNodeType.icon}</span>
+             <span className="text-xs">{selectedNodeType.name}</span>
+           </div>
+          <span className="text-xs">▼</span>
+        </button>
+        
+        {/* 下拉菜单 */}
+        {showNodeTypeMenu && (
+          <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-50 min-w-[160px]">
+            {nodeTypes.map((nodeType) => (
+              <button
+                key={nodeType.id}
+                onClick={() => handleSelectNodeType(nodeType)}
+                className={`
+                  w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-slate-700
+                  flex items-center gap-2 text-sm
+                  ${selectedNodeType.id === nodeType.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+                  first:rounded-t-lg last:rounded-b-lg
+                `}
+              >
+                <span>{nodeType.icon}</span>
+                 <div>
+                   <div className="font-medium">{nodeType.name}</div>
+                   <div className="text-xs text-gray-500 dark:text-gray-400">{nodeType.description}</div>
+                 </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      
       <button
         onClick={handleAddNode}
         className="btn btn-primary btn-sm"

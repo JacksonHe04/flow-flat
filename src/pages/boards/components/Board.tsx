@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   ReactFlow,
-  type Node,
+  type Node as FlowNode,
   addEdge,
   useNodesState,
   useEdgesState,
@@ -17,12 +17,13 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import Toolbar from '@/components/Toolbar/Toolbar';
-import RichTextNode from '@/components/Node/RichTextNode';
+import CustomNode from '@/components/Node/Node';
 import { useNodeStore } from '@/stores/nodeStore';
+import { getDefaultNodeType } from '@/config/nodeTypes';
 
 // 定义自定义节点类型
 const nodeTypes: NodeTypes = {
-  richtext: RichTextNode,
+  customNode: CustomNode,
 };
 
 /**
@@ -70,7 +71,7 @@ const BoardInner: React.FC = () => {
    * 处理节点拖拽结束，更新store中的位置
    */
   const onNodeDragStop = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: FlowNode) => {
       updateNodePosition(node.id, node.position);
     },
     [updateNodePosition]
@@ -92,12 +93,17 @@ const BoardInner: React.FC = () => {
           y: event.clientY,
         });
 
+        const defaultNodeType = getDefaultNodeType();
         const newNode = {
           id: `node-${Date.now()}`,
-          type: 'richtext' as const,
+          type: 'customNode' as const,
           position,
           size: { width: 200, height: 150 },
-          data: { content: '点击编辑文本' },
+          data: { 
+            nodeType: defaultNodeType.id,
+            title: defaultNodeType.name,
+            content: defaultNodeType.description 
+          },
         };
 
         addNode(newNode);

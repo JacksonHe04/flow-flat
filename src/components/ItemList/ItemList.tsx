@@ -31,7 +31,7 @@ interface ItemListProps {
 
 /**
  * 通用列表组件
- * 用于显示白板、markdown文档、IDE项目等列表
+ * 用于显示白板、markdown文档、Code项目等列表
  */
 const ItemList: React.FC<ItemListProps> = ({
   title,

@@ -1,16 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
-import { useNodeStore } from '../../stores/nodeStore';
+import { useNodeStore } from '@/stores/nodeStore';
 
-interface RichTextNodeData extends Record<string, unknown> {
+interface TextNodeData extends Record<string, unknown> {
+  title?: string;
   content?: string;
   onDelete?: () => void;
 }
 
-const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, selected }) => {
+/**
+ * 文本节点组件
+ */
+const TextNode: React.FC<NodeProps<Node<TextNodeData>>> = ({ id, data, selected }) => {
   const { updateNodeData } = useNodeStore();
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(data?.content || '双击编辑文本');
+  const [title, setTitle] = useState(data?.title || '文本节点');
 
   /**
    * 处理双击编辑
@@ -25,10 +30,10 @@ const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, s
    */
   const handleBlur = useCallback(() => {
     setIsEditing(false);
-    if (text !== data?.content) {
-      updateNodeData(id, { content: text });
+    if (text !== data?.content || title !== data?.title) {
+      updateNodeData(id, { content: text, title });
     }
-  }, [id, text, data?.content, updateNodeData]);
+  }, [id, text, title, data?.content, data?.title, updateNodeData]);
 
   /**
    * 处理键盘事件
@@ -38,7 +43,6 @@ const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, s
       e.preventDefault();
       (e.currentTarget as HTMLElement).blur();
     }
-    // 阻止事件冒泡，避免触发React Flow的快捷键
     e.stopPropagation();
   }, []);
 
@@ -53,10 +57,18 @@ const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, s
   return (
     <div className={`card card-hover ${selected ? 'border-primary' : ''} relative group`}>
       {/* 连接点 */}
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
-      <Handle type="target" position={Position.Left} className="w-3 h-3" />
-      <Handle type="source" position={Position.Right} className="w-3 h-3" />
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        id="input" 
+        className="w-3 h-3 bg-blue-500 border-2 border-white" 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        id="output" 
+        className="w-3 h-3 bg-green-500 border-2 border-white" 
+      />
       
       {/* 删除按钮 */}
       <button
@@ -74,10 +86,27 @@ const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, s
 
       {/* 节点内容 */}
       <div className="w-full h-full p-2">
+        {/* 标题 */}
+        <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 flex items-center">
+          <span className="mr-1">📝</span>
+          {isEditing ? (
+            <input
+              className="bg-transparent border-none outline-none flex-1"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+            />
+          ) : (
+            <span onDoubleClick={handleDoubleClick}>{title}</span>
+          )}
+        </div>
+        
+        {/* 内容 */}
         {isEditing ? (
           <textarea
             className="
-              w-full h-full bg-transparent resize-none
+              w-full flex-1 bg-transparent resize-none
               focus:outline-none focus-ring
               dark:text-white
             "
@@ -89,7 +118,7 @@ const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, s
           />
         ) : (
           <div
-            className="w-full h-full whitespace-pre-wrap dark:text-white cursor-text"
+            className="w-full flex-1 whitespace-pre-wrap dark:text-white cursor-text"
             onDoubleClick={handleDoubleClick}
           >
             {text}
@@ -100,4 +129,4 @@ const RichTextNode: React.FC<NodeProps<Node<RichTextNodeData>>> = ({ id, data, s
   );
 };
 
-export default RichTextNode;
+export default TextNode;

@@ -22,7 +22,7 @@ export interface Size {
  */
 export interface Node {
   id: string;
-  type: 'component' | 'code' | 'richtext';
+  type: 'component' | 'code' | 'richtext' | 'customNode';
   position: Position;
   size: Size;
   data: Record<string, unknown>;

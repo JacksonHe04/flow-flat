@@ -9,7 +9,7 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 flex flex-col items-center justify-center py-16 px-4">
       <div className="max-w-4xl w-full text-center mb-12">
-        <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 mb-4 drop-shadow-lg">
+        <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-4 drop-shadow-lg">
           Flow Flat
         </h1>
         <h2 className="text-5xl font-bold text-slate-800 dark:text-white mb-4 drop-shadow-sm">
@@ -23,19 +23,19 @@ const Home: React.FC = () => {
         <div className="flex justify-center space-x-4">
           <a
             href="#"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+            className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
             What is Flow Flat?
           </a>
           <a
             href="/docs"
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+            className="bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
             Quickstart
           </a>
           <a
             href="https://github.com/JacksonHe04/flow-flat"
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+            className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
             GitHub
           </a>

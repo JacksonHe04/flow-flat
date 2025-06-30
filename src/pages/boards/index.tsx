@@ -22,8 +22,8 @@ const BoardList: React.FC = () => {
             to="/board/new"
             className="
               px-4 py-2 rounded-lg
-              bg-emerald-500 text-white
-              hover:bg-emerald-600
+              bg-primary text-white
+              hover:bg-primary/90
               transition-colors duration-200
             "
           >
@@ -62,7 +62,7 @@ const BoardList: React.FC = () => {
                 <h3 className="
                   text-lg font-medium
                   text-slate-900 dark:text-white
-                  group-hover:text-emerald-500
+                  group-hover:text-primary
                   transition-colors duration-200
                 ">
                   {board.title}

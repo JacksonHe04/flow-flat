@@ -1,0 +1,197 @@
+@layer utilities {
+
+    /* 响应式容器 */
+    .container-responsive {
+        @apply container mx-auto px-4 md:px-6 lg:px-8;
+    }
+
+    /* 过渡效果 */
+    .transition-natural {
+        @apply transition-all duration-200 ease-in-out;
+    }
+
+    .transition-fast {
+        @apply transition-all duration-150 ease-in-out;
+    }
+
+    .transition-slow {
+        @apply transition-all duration-300 ease-in-out;
+    }
+
+    /* 焦点状态 */
+    .focus-ring {
+        @apply focus:outline-none focus:ring-2 focus:ring-primary/50;
+    }
+
+    .focus-ring-error {
+        @apply focus:outline-none focus:ring-2 focus:ring-error/50;
+    }
+
+    /* 文本颜色工具类 */
+    .text-primary {
+        @apply text-primary;
+    }
+
+    .text-secondary {
+        @apply text-secondary;
+    }
+
+    .text-success {
+        @apply text-success;
+    }
+
+    .text-warning {
+        @apply text-warning;
+    }
+
+    .text-error {
+        @apply text-error;
+    }
+
+    .text-info {
+        @apply text-info;
+    }
+
+    /* 背景颜色工具类 */
+    .bg-primary-light {
+        @apply bg-primary-50;
+    }
+
+    .bg-primary-lighter {
+        @apply bg-primary-100;
+    }
+
+    .bg-success-light {
+        @apply bg-green-50;
+    }
+
+    .bg-warning-light {
+        @apply bg-yellow-50;
+    }
+
+    .bg-error-light {
+        @apply bg-red-50;
+    }
+
+    .bg-info-light {
+        @apply bg-blue-50;
+    }
+
+    /* 边框颜色工具类 */
+    .border-primary {
+        @apply border-primary;
+    }
+
+    .border-success {
+        @apply border-success;
+    }
+
+    .border-warning {
+        @apply border-warning;
+    }
+
+    .border-error {
+        @apply border-error;
+    }
+
+    .border-info {
+        @apply border-info;
+    }
+
+    /* 阴影工具类 */
+    .shadow-primary {
+        @apply shadow-lg shadow-primary/20;
+    }
+
+    .shadow-success {
+        @apply shadow-lg shadow-success/20;
+    }
+
+    .shadow-error {
+        @apply shadow-lg shadow-error/20;
+    }
+
+    /* 悬停效果 */
+    .hover-lift {
+        @apply hover:-translate-y-1 hover:shadow-lg transition-all;
+    }
+
+    .hover-scale {
+        @apply hover:scale-105 transition-transform;
+    }
+
+    /* 禁用状态 */
+    .disabled {
+        @apply opacity-50 cursor-not-allowed pointer-events-none;
+    }
+
+    /* 截断文本 */
+    .text-truncate {
+        @apply truncate;
+    }
+
+    .text-truncate-2 {
+        @apply overflow-hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .text-truncate-3 {
+        @apply overflow-hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    /* 滚动条样式 */
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: theme('colors.neutral.300') transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: theme('colors.neutral.300');
+        border-radius: 3px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background-color: theme('colors.neutral.400');
+    }
+
+    /* 网格布局辅助 */
+    .grid-auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .grid-auto-fill {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    /* 居中布局 */
+    .center-absolute {
+        @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+    }
+
+    .center-flex {
+        @apply flex items-center justify-center;
+    }
+
+    /* 响应式显示 */
+    .show-mobile {
+        @apply block md:hidden;
+    }
+
+    .show-desktop {
+        @apply hidden md:block;
+    }
+}

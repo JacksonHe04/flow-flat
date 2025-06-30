@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* Tailwind v4 主题色配置 */
+@theme {
+  --color-primary: #4fa89a;
+  --color-secondary: #122345;
+  
+  /* 状态颜色 */
+  --color-success: #22c55e;   /* 成功 - 绿色 */
+  --color-warning: #eab308;   /* 警告 - 黄色 */
+  --color-error: #ef4444;     /* 错误 - 红色 */
+  --color-info: #3b82f6;      /* 信息 - 蓝色 */
+
+    /* 中性色 */
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+    /* 主色调变体 */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #4fa89a;  /* 主色调 */
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+}

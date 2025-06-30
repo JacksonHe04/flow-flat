@@ -1,6 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { addNode } from '../../store/slices/nodeSlice';
+import { useNodeStore } from '../../stores/nodeStore';
 
 interface ToolbarProps {
   zoom: number;
@@ -13,8 +12,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onZoomChange,
   onResetCanvas,
 }) => {
-  const dispatch = useDispatch();
+  const { addNode, selectedNodeIds, removeNode } = useNodeStore();
 
+  /**
+   * 处理添加节点
+   */
   const handleAddNode = () => {
     const newNode = {
       id: `node-${Date.now()}`,
@@ -23,11 +25,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
       size: { width: 200, height: 150 },
       data: {},
     };
-    dispatch(addNode(newNode));
+    addNode(newNode);
   };
 
+  /**
+   * 处理删除选中的节点
+   */
   const handleRemoveSelectedNodes = () => {
-    // 这里需要从 Redux 获取选中的节点，但为了简单起见，我们先不实现
+    selectedNodeIds.forEach(id => removeNode(id));
   };
 
   return (

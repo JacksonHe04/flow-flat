@@ -1,16 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../../store';
 import NodeContainer from '../../../components/Node/NodeContainer';
 import RichTextNode from '../../../components/Node/RichTextNode';
 import Toolbar from '../../../components/Toolbar/Toolbar';
-import { 
-  updateNodePosition, 
-  clearSelection, 
-  addNode,
-  removeNode,
-  type Node 
-} from '../../../store/slices/nodeSlice';
+import { useNodeStore, type Node } from '../../../stores/nodeStore';
 
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
@@ -18,9 +10,14 @@ const ZOOM_SPEED = 0.001;
 const DEFAULT_NODE_SIZE = { width: 200, height: 150 };
 
 const Board: React.FC = () => {
-  const dispatch = useDispatch();
-  const nodes = useSelector((state: RootState) => state.nodes.nodes);
-  const selectedNodeIds = useSelector((state: RootState) => state.nodes.selectedNodeIds);
+  const { 
+    nodes, 
+    selectedNodeIds, 
+    updateNodePosition, 
+    clearSelection, 
+    addNode, 
+    removeNode 
+  } = useNodeStore();
 
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -34,16 +31,21 @@ const Board: React.FC = () => {
     setZoom(z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z + delta)));
   }, []);
 
-  // 处理画布平移
+  /**
+   * 处理画布平移
+   */
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 1 || e.button === 2) { // 中键或右键
       e.preventDefault();
       setIsPanning(true);
       setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-      dispatch(clearSelection());
+      clearSelection();
     }
-  }, [pan, dispatch]);
+  }, [pan, clearSelection]);
 
+  /**
+   * 处理鼠标移动
+   */
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (isPanning) {
       setPan({
@@ -53,11 +55,16 @@ const Board: React.FC = () => {
     }
   }, [isPanning, panStart]);
 
+  /**
+   * 处理鼠标抬起
+   */
   const handleMouseUp = useCallback(() => {
     setIsPanning(false);
   }, []);
 
-  // 处理双击创建节点
+  /**
+   * 处理双击创建节点
+   */
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     // 确保双击的是画布而不是节点
     if ((e.target as HTMLElement).id === 'board-canvas') {
@@ -73,21 +80,27 @@ const Board: React.FC = () => {
         data: { content: '双击编辑文本' }
       };
       
-      dispatch(addNode(newNode));
+      addNode(newNode);
     }
-  }, [dispatch, pan, zoom]);
+  }, [addNode, pan, zoom]);
 
-  // 处理节点位置更新
+  /**
+   * 处理节点位置更新
+   */
   const handleNodePositionChange = useCallback((id: string, newPosition: { x: number; y: number }) => {
-    dispatch(updateNodePosition({ id, position: newPosition }));
-  }, [dispatch]);
+    updateNodePosition(id, newPosition);
+  }, [updateNodePosition]);
 
-  // 处理节点删除
+  /**
+   * 处理节点删除
+   */
   const handleDeleteNode = useCallback((id: string) => {
-    dispatch(removeNode(id));
-  }, [dispatch]);
+    removeNode(id);
+  }, [removeNode]);
 
-  // 处理画布重置
+  /**
+   * 处理画布重置
+   */
   const handleResetCanvas = useCallback(() => {
     setZoom(1);
     setPan({ x: 0, y: 0 });

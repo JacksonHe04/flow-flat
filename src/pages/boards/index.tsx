@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/store';
+import { useBoardStore } from '@/stores/boardStore';
     
+/**
+ * 白板列表组件
+ */
 const BoardList: React.FC = () => {
-  const boards = useSelector((state: RootState) => state.boards.items);
+  const { items: boards } = useBoardStore();
 
   return (
     <div className="p-8">
@@ -80,4 +82,4 @@ const BoardList: React.FC = () => {
   );
 };
 
-export default BoardList; 
+export default BoardList;

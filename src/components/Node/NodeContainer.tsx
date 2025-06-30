@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useNodeStore } from '../../stores/nodeStore';
 
 interface Position {
   x: number;
@@ -29,18 +30,26 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   onDelete,
   selected = false,
 }) => {
+  const { selectNode } = useNodeStore();
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<Position | null>(null);
 
+  /**
+   * 处理鼠标按下事件
+   */
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
+    selectNode(id);
     setIsDragging(true);
     setDragStart({
       x: e.clientX - position.x,
       y: e.clientY - position.y,
     });
-  }, [position]);
+  }, [position, id, selectNode]);
 
+  /**
+   * 处理鼠标移动事件
+   */
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging || !dragStart) return;
 
@@ -52,11 +61,17 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
     onPositionChange?.(id, newPosition);
   }, [id, isDragging, dragStart, onPositionChange]);
 
+  /**
+   * 处理鼠标抬起事件
+   */
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     setDragStart(null);
   }, []);
 
+  /**
+   * 处理删除事件
+   */
   const handleDelete = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete?.(id);
@@ -65,7 +80,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   return (
     <div
       className={`
-        absolute cursor-move
+        group absolute cursor-move
         transition-shadow duration-200
         ${isDragging ? 'shadow-lg' : 'shadow-md'}
         ${selected ? 'ring-2 ring-emerald-400' : ''}
@@ -102,4 +117,4 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   );
 };
 
-export default NodeContainer; 
+export default NodeContainer;

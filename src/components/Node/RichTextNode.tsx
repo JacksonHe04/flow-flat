@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateNodeData } from '../../store/slices/nodeSlice';
+import { useNodeStore } from '../../stores/nodeStore';
 
 interface RichTextNodeProps {
   id: string;
@@ -8,22 +7,31 @@ interface RichTextNodeProps {
 }
 
 const RichTextNode: React.FC<RichTextNodeProps> = ({ id, content }) => {
-  const dispatch = useDispatch();
+  const { updateNodeData } = useNodeStore();
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(content);
 
+  /**
+   * 处理双击编辑
+   */
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     setIsEditing(true);
   }, []);
 
+  /**
+   * 处理失去焦点，保存内容
+   */
   const handleBlur = useCallback(() => {
     setIsEditing(false);
     if (text !== content) {
-      dispatch(updateNodeData({ id, data: { content: text } }));
+      updateNodeData(id, { content: text });
     }
-  }, [id, text, content, dispatch]);
+  }, [id, text, content, updateNodeData]);
 
+  /**
+   * 处理键盘事件
+   */
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();

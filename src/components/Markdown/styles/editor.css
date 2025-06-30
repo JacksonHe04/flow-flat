@@ -214,7 +214,7 @@
 /* 页面场景样式 */
 .markdown-editor .ProseMirror {
   padding: 1rem;
-  min-height: 300px;
+  min-height: 90vh;
 }
 
 .markdown-editor .ProseMirror h1 {

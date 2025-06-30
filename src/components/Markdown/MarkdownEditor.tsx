@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { EditorContent } from '@tiptap/react';
-import { useRichTextEditor, useLocalAutoSave } from './hooks';
+import { useRichTextEditor } from './hooks';
 import { getEditorClassName, getThemeClassName, getEditorTheme } from './styles';
 import { ToolbarContainer, type ToolbarConfig } from './Toolbar';
 import { getPageExtensions, getPagePreviewExtensions } from './extensions';
@@ -20,7 +20,7 @@ export interface MarkdownEditorProps {
   autoFocus?: boolean;
   showToolbar?: boolean;
   toolbarConfig?: ToolbarConfig;
-  showStatusBar?: boolean;
+  // showStatusBar?: boolean;
   autoSave?: boolean;
   autoSaveDelay?: number;
   localStorageKey?: string;
@@ -39,15 +39,13 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   onChange,
   onBlur,
   onFocus,
-  placeholder = '开始编写...',
+  placeholder = '',
   editable = true,
   className = '',
   autoFocus = false,
   showToolbar = true,
   toolbarConfig,
-  showStatusBar = true,
-  localStorageKey,
-  fullHeight = false,
+  fullHeight = true,
   maxWidth = '100%',
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -99,15 +97,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   });
 
   /**
-   * 本地存储自动保存
-   */
-  useLocalAutoSave(
-    localStorageKey || 'markdown-editor-content',
-    content,
-    1000
-  );
-
-  /**
    * 获取工具栏配置
    */
   const getToolbarConfig = useCallback((): ToolbarConfig => {
@@ -135,7 +124,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   const getContainerClassName = () => {
     const baseClass = 'markdown-editor flex flex-col';
     const themeClass = getThemeClass();
-    const heightClass = fullHeight ? 'h-full' : 'min-h-96';
+    const heightClass = fullHeight ? 'h-full' : 'min-h-0';
     const focusClass = isFocused ? 'focused' : '';
     
     return `${baseClass} ${themeClass} ${heightClass} ${focusClass} ${className}`.trim();
@@ -166,7 +155,12 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     >
       {/* 工具栏 */}
       {showToolbar && editable && (
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        <div className="
+          fixed top-16 left-0 right-0 z-40
+          border-b border-gray-200 dark:border-gray-700
+          bg-white dark:bg-gray-900
+          shadow-sm
+        ">
           <ToolbarContainer
             editor={editor}
             config={getToolbarConfig()}
@@ -175,36 +169,29 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       )}
       
       {/* 编辑器内容区域 */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className={`
+        flex-1 relative overflow-hidden h-full
+        ${showToolbar && editable ? 'pt-16' : ''}
+      `}>
         <EditorContent
           editor={editor}
-          className={getEditorContentClassName()}
+          className={`${getEditorContentClassName()} h-full`}
         />
         
         {/* 占位符 */}
         {isEmpty && placeholder && (
-          <div className="
-            absolute top-0 left-0 pointer-events-none
+          <div className={`
+            absolute left-0 pointer-events-none
             text-gray-400 dark:text-gray-500
             p-6 text-base
             select-none
-          ">
+            ${showToolbar && editable ? 'top-16' : 'top-0'}
+          `}>
             {placeholder}
           </div>
         )}
       </div>
-      
-      {/* 状态栏 */}
-      {showStatusBar && (
-        <div className="
-          flex items-center justify-between
-          px-4 py-2
-          border-t border-gray-200 dark:border-gray-700
-          bg-gray-50 dark:bg-gray-800
-          text-sm text-gray-600 dark:text-gray-400
-        ">
-        </div>
-      )}
+    
     </div>
   );
 };

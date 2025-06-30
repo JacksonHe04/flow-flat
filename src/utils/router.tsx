@@ -5,6 +5,7 @@ import Home from '@/pages/home';
 import BoardList from '@/pages/boards';
 import Board from '@/pages/boards/components/Board';
 import MarkdownList from '@/pages/markdown';
+import MarkdownEditor from '@/pages/markdown/components/MarkdownEditor';
 import CodeList from '@/pages/code';
 import Docs from '@/pages/docs';
 
@@ -36,7 +37,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/markdown/:id',
-        element: <div>Markdown编辑器页面</div>,
+        element: <MarkdownEditor />,
       },
       {
         path: '/code',

@@ -58,20 +58,6 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
     }
   }, [id, markdown, data?.title, updateNodeData]);
 
-  /**
-   * 简单的Markdown渲染（基础版本）
-   */
-  const renderMarkdown = useCallback((text: string) => {
-    return text
-      .replace(/^# (.*$)/gim, '<h1 class="text-lg font-bold mb-2">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-md font-semibold mb-2">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 class="text-sm font-medium mb-1">$1</h3>')
-      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-      .replace(/^- (.*$)/gim, '<li class="ml-4">• $1</li>')
-      .replace(/\n/gim, '<br />');
-  }, []);
-
   return (
     <NodeContainer 
       selected={selected} 
@@ -106,8 +92,10 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
             prose prose-sm dark:prose-invert max-w-none
           "
           onDoubleClick={handleDoubleClick}
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(markdown) }}
-        />
+        >
+          {/* 这里留空，用于后续引入Markdown渲染组件 */}
+          <pre className="whitespace-pre-wrap">{markdown}</pre>
+        </div>
       )}
     </NodeContainer>
   );

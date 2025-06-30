@@ -13,12 +13,8 @@ import {
   HeadingIcon,
   BulletListIcon,
   OrderedListIcon,
-  TaskListIcon,
   BlockquoteIcon,
   CodeBlockIcon,
-  LinkIcon,
-  ImageIcon,
-  TableIcon,
   HorizontalRuleIcon,
   UndoIcon,
   RedoIcon,
@@ -33,13 +29,9 @@ import {
   setParagraph,
   toggleBulletList,
   toggleOrderedList,
-  toggleTaskList,
   toggleBlockquote,
   toggleCodeBlock,
   insertHorizontalRule,
-  // toggleLink, // 暂时移除，功能不可用
-  insertImage,
-  insertTable,
   undo,
   redo,
   clearFormat,
@@ -92,8 +84,6 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
   editor,
   config = defaultConfig,
   className = '',
-  onLinkClick,
-  onImageClick,
 }) => {
   const { state } = useToolbar(editor);
   const finalConfig = { ...defaultConfig, ...config };
@@ -101,35 +91,6 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
   if (!editor) {
     return null;
   }
-
-  /**
-   * 处理链接点击
-   */
-  const handleLinkClick = () => {
-    if (onLinkClick) {
-      onLinkClick();
-    } else {
-      const url = window.prompt('请输入链接地址:');
-      if (url !== null) {
-        // setLink功能暂时不可用
-        console.warn('Link功能暂时不可用', { url });
-      }
-    }
-  };
-
-  /**
-   * 处理图片点击
-   */
-  const handleImageClick = () => {
-    if (onImageClick) {
-      onImageClick();
-    } else {
-      const url = window.prompt('请输入图片地址:');
-      if (url) {
-        insertImage(editor, url);
-      }
-    }
-  };
 
   /**
    * 获取标题下拉选项
@@ -237,14 +198,6 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
             isActive={state.orderedList}
             onClick={() => toggleOrderedList(editor)}
           />
-          {!finalConfig.compact && (
-            <ToolbarButton
-              icon={<TaskListIcon />}
-              title="任务列表"
-              isActive={state.taskList}
-              onClick={() => toggleTaskList(editor)}
-            />
-          )}
         </ToolbarGroup>
       )}
 
@@ -270,34 +223,6 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
               onClick={() => insertHorizontalRule(editor)}
             />
           )}
-        </ToolbarGroup>
-      )}
-
-      {/* 媒体组 */}
-      {finalConfig.showMedia && (
-        <ToolbarGroup>
-          <ToolbarButton
-            icon={<LinkIcon />}
-            title="链接"
-            isActive={state.link}
-            onClick={handleLinkClick}
-          />
-          <ToolbarButton
-            icon={<ImageIcon />}
-            title="图片"
-            onClick={handleImageClick}
-          />
-        </ToolbarGroup>
-      )}
-
-      {/* 表格组 */}
-      {finalConfig.showTable && !finalConfig.compact && (
-        <ToolbarGroup>
-          <ToolbarButton
-            icon={<TableIcon />}
-            title="插入表格"
-            onClick={() => insertTable(editor)}
-          />
         </ToolbarGroup>
       )}
 

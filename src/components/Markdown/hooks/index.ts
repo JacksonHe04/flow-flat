@@ -7,8 +7,6 @@ export {
 
 export {
   useToolbar,
-  useLinkEditor,
-  useImageUpload,
   type ToolbarState,
   type UseToolbarReturn,
 } from './useToolbar';

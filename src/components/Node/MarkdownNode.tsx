@@ -3,6 +3,7 @@ import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
 import NodeContainer from './NodeContainer';
 import NodeHeader from './NodeHeader';
+import MarkdownNodeEditor from '@/components/Markdown/MarkdownNode';
 
 interface MarkdownNodeData extends Record<string, unknown> {
   title?: string;
@@ -35,21 +36,17 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
   }, [id, markdown, title, data?.content, data?.title, updateNodeData]);
 
   /**
-   * 处理键盘事件
+   * 处理双击事件，切换到编辑模式
    */
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const target = e.currentTarget as HTMLTextAreaElement;
-      const start = target.selectionStart;
-      const end = target.selectionEnd;
-      setMarkdown(markdown.substring(0, start) + '  ' + markdown.substring(end));
-      setTimeout(() => {
-        target.selectionStart = target.selectionEnd = start + 2;
-      }, 0);
+
+  /**
+   * 处理焦点事件，自动切换到编辑模式
+   */
+  const handleFocus = useCallback(() => {
+    if (!isEditing) {
+      setIsEditing(true);
     }
-    e.stopPropagation();
-  }, [markdown]);
+  }, [isEditing]);
 
   const handleTitleChange = useCallback((newTitle: string) => {
     setTitle(newTitle);
@@ -70,32 +67,26 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
       />
       
       {/* Markdown内容 */}
-      {isEditing ? (
-        <textarea
-          className="
-            w-full flex-1 bg-transparent resize-none
-            font-mono text-sm border border-gray-300 rounded p-2
-            focus:outline-none focus-ring
-            dark:text-white dark:border-gray-600
-          "
-          value={markdown}
-          onChange={e => setMarkdown(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          placeholder="输入Markdown内容..."
-        />
-      ) : (
+      <MarkdownNodeEditor
+        content={markdown}
+        onChange={setMarkdown}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
+        editable={isEditing}
+        autoFocus={isEditing}
+        placeholder="输入Markdown内容..."
+        className="w-full flex-1"
+        minHeight={100}
+        maxHeight={300}
+        showPlaceholder={true}
+      />
+      
+      {/* 非编辑模式下添加双击事件处理 */}
+      {!isEditing && (
         <div
-          className="
-            w-full flex-1 cursor-text overflow-auto
-            prose prose-sm dark:prose-invert max-w-none
-          "
+          className="absolute inset-0 cursor-text"
           onDoubleClick={handleDoubleClick}
-        >
-          {/* 这里留空，用于后续引入Markdown渲染组件 */}
-          <pre className="whitespace-pre-wrap">{markdown}</pre>
-        </div>
+        />
       )}
     </NodeContainer>
   );

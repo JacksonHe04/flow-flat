@@ -18,8 +18,6 @@ export const getBaseExtensions = (placeholder?: string): Extension[] => {
       placeholder: placeholder || '开始输入...',
     }),
     Typography,
-    // Link扩展暂时移除，存在类型兼容性问题
-    // Image和Table扩展暂时移除，存在类型兼容性问题
   ];
 };
 
@@ -33,7 +31,5 @@ export const getReadOnlyExtensions = (): Extension[] => {
       codeBlock: false,
     }),
     Typography,
-    // Link扩展暂时移除，存在类型兼容性问题
-    // Image和Table扩展暂时移除，存在类型兼容性问题
   ];
 };

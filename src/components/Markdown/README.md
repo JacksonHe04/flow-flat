@@ -1,369 +1,251 @@
-# Markdown 富文本编辑器组件
+# Flow Flat Markdown 组件库
 
-基于 TipTap 构建的高度可配置、模块化的富文本编辑器组件系统，专为 Flow-Flat 项目设计。
+## 简介
 
-## 🚀 特性
+Flow Flat Markdown 组件库是一个基于 TipTap 的富文本编辑器组件集合，提供了丰富的 Markdown 编辑和预览功能。该组件库设计灵活，可以适应不同场景的需求，从简单的节点内嵌编辑器到完整的页面编辑器都有对应的实现。
 
-- **模块化设计**: 支持节点内嵌和独立页面两种使用场景
-- **高度可配置**: 灵活的工具栏配置和扩展系统
-- **TypeScript 支持**: 完整的类型定义
-- **主题支持**: 内置亮色/暗色主题
-- **自动保存**: 支持本地存储和远程保存
-- **性能优化**: 防抖更新、懒加载扩展
-- **可访问性**: 符合 WCAG 标准
-- **响应式设计**: 适配各种屏幕尺寸
+## 组件结构
 
-## 📦 组件概览
-
-### 核心组件
-
-1. **RichTextEditor** - 基础富文本编辑器
-2. **MarkdownNode** - 节点内嵌编辑器
-3. **MarkdownEditor** - 完整页面编辑器
-
-### 工具栏组件
-
-- **ToolbarContainer** - 工具栏容器
-- **ToolbarButton** - 工具栏按钮
-- **ToolbarGroup** - 工具栏分组
-- **ToolbarDropdown** - 工具栏下拉菜单
-
-## 🛠 安装和依赖
-
-项目已包含以下 TipTap 相关依赖：
-
-```json
-{
-  "@tiptap/react": "^2.1.13",
-  "@tiptap/pm": "^2.1.13",
-  "@tiptap/starter-kit": "^2.1.13",
-  "@tiptap/extension-placeholder": "^2.1.13",
-  "@tiptap/extension-typography": "^2.1.13",
-  "@tiptap/extension-link": "^2.1.13",
-  "@tiptap/extension-image": "^2.1.13",
-  "@tiptap/extension-table": "^2.1.13",
-  "@tiptap/extension-table-row": "^2.1.13",
-  "@tiptap/extension-table-cell": "^2.1.13",
-  "@tiptap/extension-table-header": "^2.1.13",
-  "@tiptap/extension-task-list": "^2.1.13",
-  "@tiptap/extension-task-item": "^2.1.13",
-  "@tiptap/extension-code-block-lowlight": "^2.1.13",
-  "@tiptap/extension-mention": "^2.1.13",
-  "@tiptap/extension-character-count": "^2.1.13",
-  "lowlight": "^3.1.0",
-  "@types/hast": "^3.0.4"
-}
+```
+/Markdown
+├── 主要组件
+│   ├── RichText.tsx         # 基础富文本编辑器组件
+│   ├── MarkdownNode.tsx     # 节点内嵌的轻量级编辑器组件
+│   └── MarkdownEditor.tsx   # 完整的页面级编辑器组件
+├── 工具栏组件
+│   ├── ToolbarContainer.tsx # 工具栏容器
+│   ├── ToolbarButton.tsx    # 工具栏按钮
+│   ├── ToolbarGroup.tsx     # 工具栏分组
+│   └── ToolbarDropdown.tsx  # 工具栏下拉菜单
+├── 扩展配置
+│   ├── baseExtensions.ts    # 基础扩展配置
+│   ├── nodeExtensions.ts    # 节点场景扩展配置
+│   └── pageExtensions.ts    # 页面场景扩展配置
+├── 自定义钩子
+│   ├── useRichTextEditor.ts # 富文本编辑器钩子
+│   ├── useAutoSave.ts       # 自动保存钩子
+│   └── useToolbar.ts        # 工具栏状态管理钩子
+├── 样式配置
+│   ├── editorStyles.ts      # 编辑器样式配置
+│   └── themeConfig.ts       # 主题配置
+└── 工具函数
+    ├── contentUtils.ts      # 内容处理工具函数
+    └── formatUtils.ts       # 格式化工具函数
 ```
 
-## 📖 使用指南
+## 主要组件
 
-### 基础使用
+### RichTextEditor
 
-```tsx
-import { RichTextEditor } from '@/components/Markdown';
-
-function MyComponent() {
-  const [content, setContent] = useState('');
-
-  return (
-    <RichTextEditor
-      content={content}
-      onChange={setContent}
-      placeholder="请输入内容..."
-    />
-  );
-}
-```
-
-### 节点内嵌编辑器
-
-```tsx
-import { MarkdownNode } from '@/components/Markdown';
-
-function FlowNode() {
-  const [content, setContent] = useState('');
-
-  return (
-    <MarkdownNode
-      content={content}
-      onChange={setContent}
-      placeholder="点击编辑..."
-      minHeight={60}
-      maxHeight={200}
-    />
-  );
-}
-```
-
-### 完整页面编辑器
-
-```tsx
-import { MarkdownEditor } from '@/components/Markdown';
-
-function DocumentEditor() {
-  const [content, setContent] = useState('');
-
-  const handleSave = async (content: string) => {
-    // 保存到服务器
-    await api.saveDocument(content);
-  };
-
-  return (
-    <MarkdownEditor
-      content={content}
-      onChange={setContent}
-      onSave={handleSave}
-      autoSave={true}
-      showStatusBar={true}
-      localStorageKey="my-document"
-    />
-  );
-}
-```
-
-## ⚙️ 配置选项
-
-### RichTextEditor Props
-
-| 属性 | 类型 | 默认值 | 描述 |
-|------|------|--------|------|
-| `content` | `string` | `''` | 编辑器内容 |
-| `onChange` | `(content: string) => void` | - | 内容变化回调 |
-| `placeholder` | `string` | - | 占位符文本 |
-| `editable` | `boolean` | `true` | 是否可编辑 |
-| `variant` | `'node' \| 'page'` | `'page'` | 编辑器变体 |
-| `showToolbar` | `boolean` | `true` | 是否显示工具栏 |
-| `toolbarConfig` | `ToolbarConfig` | - | 工具栏配置 |
-| `autoFocus` | `boolean` | `false` | 自动聚焦 |
-| `debounceDelay` | `number` | `300` | 防抖延迟（毫秒） |
-
-### ToolbarConfig
-
-```tsx
-interface ToolbarConfig {
-  compact?: boolean;        // 紧凑模式
-  showTable?: boolean;      // 显示表格工具
-  showMedia?: boolean;      // 显示媒体工具
-  showHistory?: boolean;    // 显示历史操作
-}
-```
-
-### MarkdownEditor 额外 Props
-
-| 属性 | 类型 | 默认值 | 描述 |
-|------|------|--------|------|
-| `onSave` | `(content: string) => Promise<void>` | - | 保存回调 |
-| `autoSave` | `boolean` | `true` | 自动保存 |
-| `autoSaveDelay` | `number` | `2000` | 自动保存延迟 |
-| `localStorageKey` | `string` | - | 本地存储键名 |
-| `showStatusBar` | `boolean` | `true` | 显示状态栏 |
-| `theme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | 主题模式 |
-| `fullHeight` | `boolean` | `false` | 全高度模式 |
-
-## 🎨 样式定制
-
-### CSS 变量
-
-组件使用 CSS 变量支持主题定制：
-
-```css
-:root {
-  --editor-bg: #ffffff;
-  --editor-text: #1f2937;
-  --editor-border: #e5e7eb;
-  --toolbar-bg: #f9fafb;
-  --button-hover: #f3f4f6;
-}
-
-[data-theme="dark"] {
-  --editor-bg: #1f2937;
-  --editor-text: #f9fafb;
-  --editor-border: #374151;
-  --toolbar-bg: #111827;
-  --button-hover: #374151;
-}
-```
-
-### 自定义样式类
+基础的富文本编辑器组件，提供了核心的编辑功能，可以根据不同场景进行配置。
 
 ```tsx
 <RichTextEditor
-  className="my-custom-editor"
-  content={content}
-  onChange={setContent}
+  content="初始内容"
+  onChange={(content) => console.log(content)}
+  variant="page" // 'node' | 'page'
+  showToolbar={true}
+  placeholder="开始编写..."
 />
 ```
 
-## 🔧 扩展系统
+### MarkdownNode
 
-### 使用自定义扩展
+专为流程图节点设计的轻量级编辑器组件，提供简洁的编辑体验，适合在节点内嵌使用。
 
 ```tsx
-import { Extension } from '@tiptap/core';
-import { RichTextEditor } from '@/components/Markdown';
-
-const CustomExtension = Extension.create({
-  name: 'customExtension',
-  // 扩展配置
-});
-
-function MyEditor() {
-  return (
-    <RichTextEditor
-      extensions={[CustomExtension]}
-      content={content}
-      onChange={setContent}
-    />
-  );
-}
+<MarkdownNode
+  content="节点内容"
+  onChange={(content) => console.log(content)}
+  placeholder="输入内容..."
+  minHeight={40}
+  maxHeight={300}
+  onEmpty={() => console.log('内容为空')}
+  onNotEmpty={() => console.log('内容不为空')}
+/>
 ```
 
-### 预设扩展配置
+### MarkdownEditor
+
+完整的页面级编辑器组件，提供了工具栏、状态栏、自动保存等功能，适合作为独立的编辑页面使用。
 
 ```tsx
-import { getPageExtensions, getNodeExtensions } from '@/components/Markdown';
-
-// 获取页面模式扩展
-const pageExtensions = getPageExtensions('请输入内容...');
-
-// 获取节点模式扩展
-const nodeExtensions = getNodeExtensions('点击编辑...');
+<MarkdownEditor
+  content="页面内容"
+  onChange={(content) => console.log(content)}
+  onSave={async (content) => await saveToServer(content)}
+  showToolbar={true}
+  showStatusBar={true}
+  autoSave={true}
+  autoSaveDelay={2000}
+  localStorageKey="my-document"
+  fullHeight={true}
+/>
 ```
 
-## 🎯 使用场景
+## 工具栏组件
 
-### 1. Flow 节点内嵌编辑
-
-```tsx
-// 在 Flow 节点中使用
-function FlowTextNode({ data, onChange }) {
-  return (
-    <div className="flow-node">
-      <MarkdownNode
-        content={data.content}
-        onChange={(content) => onChange({ ...data, content })}
-        placeholder="输入文本..."
-        minHeight={40}
-        maxHeight={150}
-      />
-    </div>
-  );
-}
-```
-
-### 2. 文档编辑页面
+工具栏组件提供了丰富的文本格式化功能，包括文本样式、标题、列表、引用、代码块等。
 
 ```tsx
-// 独立的文档编辑页面
-function DocumentPage() {
-  return (
-    <div className="h-screen">
-      <MarkdownEditor
-        content={document.content}
-        onChange={handleContentChange}
-        onSave={handleSave}
-        fullHeight={true}
-        autoSave={true}
-        localStorageKey={`doc-${document.id}`}
-      />
-    </div>
-  );
-}
-```
-
-### 3. 评论系统
-
-```tsx
-// 评论编辑器
-function CommentEditor({ onSubmit }) {
-  const [content, setContent] = useState('');
-
-  return (
-    <div>
-      <RichTextEditor
-        content={content}
-        onChange={setContent}
-        variant="node"
-        placeholder="写下你的评论..."
-        toolbarConfig={{ compact: true, showTable: false }}
-      />
-      <button onClick={() => onSubmit(content)}>
-        发布评论
-      </button>
-    </div>
-  );
-}
-```
-
-## 🔍 API 参考
-
-### Hooks
-
-- `useRichTextEditor` - 编辑器核心 Hook
-- `useToolbar` - 工具栏状态管理
-- `useAutoSave` - 自动保存功能
-- `useLocalAutoSave` - 本地存储自动保存
-
-### 工具函数
-
-- `isContentEmpty` - 检查内容是否为空
-- `getPlainText` - 获取纯文本
-- `getWordCount` - 获取字数统计
-- `sanitizeContent` - 清理内容
-- `markdownToHtml` / `htmlToMarkdown` - 格式转换
-
-### 格式化操作
-
-- `toggleBold` / `toggleItalic` / `toggleStrike` - 文本格式
-- `setHeading` / `setParagraph` - 段落格式
-- `toggleBulletList` / `toggleOrderedList` - 列表
-- `insertImage` / `insertTable` - 插入元素
-
-## 🐛 故障排除
-
-### 常见问题
-
-1. **编辑器不显示**
-   - 检查是否正确导入组件
-   - 确认 TipTap 依赖已安装
-
-2. **样式异常**
-   - 确认 Tailwind CSS 已正确配置
-   - 检查 CSS 变量是否定义
-
-3. **扩展不工作**
-   - 检查扩展配置是否正确
-   - 确认扩展依赖已安装
-
-### 调试技巧
-
-```tsx
-// 启用调试模式
-<RichTextEditor
-  content={content}
-  onChange={(newContent) => {
-    console.log('Content changed:', newContent);
-    setContent(newContent);
+<ToolbarContainer
+  editor={editor}
+  config={{
+    compact: false,
+    showTable: true,
+    showMedia: true,
+    showHistory: true,
   }}
 />
 ```
 
-## 📝 更新日志
+## 自定义钩子
 
-### v1.0.0
-- 初始版本发布
-- 支持基础富文本编辑功能
-- 提供节点和页面两种模式
-- 集成工具栏和自动保存功能
+### useRichTextEditor
 
-## 🤝 贡献指南
+封装了 TipTap 编辑器的创建和状态管理，提供了编辑器实例和状态信息。
 
-1. Fork 项目
-2. 创建功能分支
-3. 提交更改
-4. 推送到分支
-5. 创建 Pull Request
+```tsx
+const { editor, isEmpty, isFocused, wordCount, characterCount } = useRichTextEditor({
+  content: "初始内容",
+  extensions: getPageExtensions(),
+  editable: true,
+  autofocus: false,
+  onUpdate: handleUpdate,
+  onFocus: handleFocus,
+  onBlur: handleBlur,
+});
+```
 
-## 📄 许可证
+### useAutoSave
 
-MIT License
+提供内容自动保存功能，可以配置保存延迟和保存回调。
+
+```tsx
+const { isSaving, lastSaved, save } = useAutoSave({
+  content: "要保存的内容",
+  onSave: async (content) => await saveToServer(content),
+  delay: 2000,
+  enabled: true,
+});
+```
+
+### useLocalAutoSave
+
+将内容自动保存到 localStorage，方便恢复编辑状态。
+
+```tsx
+useLocalAutoSave("document-key", content, 1000);
+
+// 恢复内容
+const savedContent = useLocalRestore("document-key");
+
+// 清除内容
+clearLocalContent("document-key");
+```
+
+### useToolbar
+
+管理工具栏按钮的激活状态，根据编辑器当前状态更新工具栏。
+
+```tsx
+const { state, updateState } = useToolbar(editor);
+// state.bold, state.italic, state.heading1 等表示当前格式状态
+```
+
+## 工具函数
+
+### 内容处理工具函数
+
+提供了内容检查、转换和处理的功能。
+
+```tsx
+// 检查内容是否为空
+isContentEmpty(content);
+
+// 获取纯文本内容
+getPlainText(htmlContent);
+
+// 获取内容摘要
+getContentSummary(content, 100);
+
+// 计算字数
+getWordCount(content);
+
+// 清理HTML内容
+sanitizeContent(content);
+
+// Markdown 和 HTML 互转
+markdownToHtml(markdown);
+htmlToMarkdown(html);
+```
+
+### 格式化工具函数
+
+提供了文本格式化的功能。
+
+```tsx
+// 切换粗体
+toggleBold(editor);
+
+// 切换斜体
+toggleItalic(editor);
+
+// 设置标题
+setHeading(editor, 2); // h2
+
+// 切换列表
+toggleBulletList(editor);
+toggleOrderedList(editor);
+
+// 获取当前格式状态
+const formatState = getFormatState(editor);
+```
+
+## 样式和主题
+
+组件库提供了灵活的样式配置和主题支持，可以适应不同的设计需求。
+
+```tsx
+// 获取编辑器样式
+const editorClassName = getEditorClassName('page');
+
+// 获取工具栏样式
+const toolbarClassName = getToolbarClassName(false);
+
+// 获取主题样式
+const editorTheme = getEditorTheme(isDarkMode);
+const themeClass = getThemeClassName(editorTheme, 'background');
+```
+
+## 扩展配置
+
+组件库提供了不同场景的扩展配置，可以根据需要选择合适的扩展。
+
+```tsx
+// 基础扩展
+const baseExtensions = getBaseExtensions(placeholder);
+
+// 节点场景扩展
+const nodeExtensions = getNodeExtensions(placeholder);
+
+// 页面场景扩展
+const pageExtensions = getPageExtensions();
+
+// 只读模式扩展
+const readOnlyExtensions = getReadOnlyExtensions();
+```
+
+## 使用场景
+
+1. **流程图节点内容编辑**：使用 `MarkdownNode` 组件，提供轻量级的编辑体验。
+2. **文档页面编辑**：使用 `MarkdownEditor` 组件，提供完整的编辑功能。
+3. **自定义编辑器**：使用 `RichTextEditor` 组件，根据需要进行配置。
+
+## 注意事项
+
+1. 组件库依赖于 TipTap 编辑器，需要安装相关依赖。
+2. 样式基于 Tailwind CSS，需要确保项目中已配置。
+3. 主题支持亮色和暗色模式，可以根据系统主题自动切换。
+4. 自动保存功能需要配置保存回调函数。
+5. 本地存储功能使用 localStorage，需要注意浏览器兼容性和存储限制。

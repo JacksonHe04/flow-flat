@@ -5,7 +5,7 @@ import Home from '@/pages/home';
 import BoardList from '@/pages/boards';
 import Board from '@/pages/boards/components/Board';
 import MarkdownList from '@/pages/markdown';
-import MarkdownEditor from '@/pages/markdown/components/MarkdownEditor';
+import MarkdownEditor from '@/components/Markdown/MarkdownEditor';
 import CodeList from '@/pages/code';
 import Docs from '@/pages/docs';
 

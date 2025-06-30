@@ -60,13 +60,6 @@ export const toggleOrderedList = (editor: Editor) => {
   editor.chain().focus().toggleOrderedList().run();
 };
 
-/**
- * 切换任务列表
- */
-export const toggleTaskList = (editor: Editor) => {
-  // TaskList扩展暂时移除，使用普通列表替代
-  editor.chain().focus().toggleBulletList().run();
-};
 
 /**
  * 切换引用块
@@ -94,40 +87,6 @@ export const insertHorizontalRule = (editor: Editor) => {
  */
 export const insertHardBreak = (editor: Editor) => {
   editor.chain().focus().setHardBreak().run();
-};
-
-/**
- * 设置链接
- */
-export const toggleLink = (_editor: Editor, url?: string) => {
-  // Link扩展暂时移除，功能暂不可用
-  console.warn('Link功能暂时不可用', { url });
-};
-
-/**
- * 取消链接
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const removeLink = (_editor: Editor) => {
-  // Link扩展暂时移除，功能暂不可用
-  console.warn('Link功能暂时不可用');
-};
-
-/**
- * 插入图片
- */
-export const insertImage = (_editor: Editor, src: string, alt: string = '') => {
-  // Image扩展暂时移除，功能暂不可用
-  console.warn('Image功能暂时不可用', { src, alt });
-};
-
-/**
- * 插入表格
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const insertTable = (_editor: Editor, _rows: number = 3, _cols: number = 3) => {
-  // Table扩展暂时移除，功能暂不可用
-  console.warn('Table功能暂时不可用');
 };
 
 /**
@@ -166,9 +125,7 @@ export const getFormatState = (editor: Editor) => {
     paragraph: editor.isActive('paragraph'),
     bulletList: editor.isActive('bulletList'),
     orderedList: editor.isActive('orderedList'),
-    taskList: editor.isActive('taskList'),
     blockquote: editor.isActive('blockquote'),
     codeBlock: editor.isActive('codeBlock'),
-    link: editor.isActive('link'),
   };
 };

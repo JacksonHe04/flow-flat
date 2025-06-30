@@ -4,7 +4,6 @@ import { useRichTextEditor, useAutoSave, useLocalAutoSave } from './hooks';
 import { getEditorClassName, getThemeClassName, getEditorTheme } from './styles';
 import { ToolbarContainer, type ToolbarConfig } from './Toolbar';
 import { getPageExtensions, getPagePreviewExtensions } from './extensions';
-// import { getWordCount, getPlainText } from './utils';
 
 /**
  * MarkdownEditor组件Props接口

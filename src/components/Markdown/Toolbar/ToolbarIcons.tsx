@@ -1,72 +1,71 @@
 import React from 'react';
+import { 
+  Bold, 
+  Italic, 
+  Strikethrough, 
+  Code, 
+  Link, 
+  Type,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered
+} from 'lucide-react';
 
-/**
- * 工具栏图标组件集合
- * 提供编辑器常用的SVG图标
- */
-
-/**
- * 粗体图标
- */
-export const BoldIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
-  </svg>
+// Bold icon
+export const BoldIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Bold className={className} />
 );
 
-/**
- * 斜体图标
- */
-export const ItalicIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 4h-9m4 16H5m4-8l4-8" />
-  </svg>
+// Italic icon
+export const ItalicIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Italic className={className} />
 );
 
-/**
- * 删除线图标
- */
-export const StrikeIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 12h12M8 4h8M8 20h8" />
-  </svg>
+// Strikethrough icon
+export const StrikethroughIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Strikethrough className={className} />
 );
 
-/**
- * 代码图标
- */
-export const CodeIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-  </svg>
+// Code icon
+export const CodeIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Code className={className} />
 );
 
-/**
- * 标题图标
- */
-export const HeadingIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-  </svg>
+// Link icon
+export const LinkIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Link className={className} />
 );
 
-/**
- * 无序列表图标
- */
-export const BulletListIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-  </svg>
+// Paragraph icon (using Type icon which represents text/paragraph)
+export const ParagraphIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Type className={className} />
 );
 
-/**
- * 有序列表图标
- */
-export const OrderedListIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-  </svg>
+// Heading 1 icon
+export const Heading1Icon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Heading1 className={className} />
+);
+
+// Heading 2 icon
+export const Heading2Icon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Heading2 className={className} />
+);
+
+// Heading 3 icon
+export const Heading3Icon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <Heading3 className={className} />
+);
+
+// Unordered list icon
+export const UnorderedListIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <List className={className} />
+);
+
+// Ordered list icon
+export const OrderedListIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <ListOrdered className={className} />
 );
 
 /**

@@ -1,40 +1,34 @@
+// 导入编辑器专用CSS样式
+import './editor.css';
+
 /**
  * 编辑器样式配置
  */
 export const editorStyles = {
   // 基础编辑器样式
   base: `
-    prose prose-sm dark:prose-invert max-w-none
+    max-w-none
     focus:outline-none
-    [&_.ProseMirror]:outline-none
-    [&_.ProseMirror]:min-h-[100px]
   `,
   
   // 节点场景样式
   node: `
-    prose prose-xs dark:prose-invert max-w-none
+    max-w-none
     focus:outline-none
-    [&_.ProseMirror]:outline-none
-    [&_.ProseMirror]:min-h-[60px]
-    [&_.ProseMirror]:max-h-[200px]
-    [&_.ProseMirror]:overflow-y-auto
-    [&_.ProseMirror]:text-sm
+    markdown-node
   `,
   
   // 页面场景样式
   page: `
-    prose prose-base dark:prose-invert max-w-none
+    max-w-none
     focus:outline-none
-    [&_.ProseMirror]:outline-none
-    [&_.ProseMirror]:min-h-[300px]
-    [&_.ProseMirror]:p-4
+    markdown-editor
   `,
   
   // 只读模式样式
   readonly: `
-    prose prose-sm dark:prose-invert max-w-none
-    [&_.ProseMirror]:outline-none
-    [&_.ProseMirror]:cursor-default
+    max-w-none
+    cursor-default
   `,
 };
 

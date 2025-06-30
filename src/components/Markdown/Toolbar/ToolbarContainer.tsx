@@ -8,10 +8,13 @@ import ToolbarDropdown from './ToolbarDropdown';
 import {
   BoldIcon,
   ItalicIcon,
-  StrikeIcon,
+  StrikethroughIcon,
   CodeIcon,
-  HeadingIcon,
-  BulletListIcon,
+  ParagraphIcon,
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
+  UnorderedListIcon,
   OrderedListIcon,
   BlockquoteIcon,
   CodeBlockIcon,
@@ -99,24 +102,28 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
     {
       label: '段落',
       value: 'paragraph',
+      icon: <ParagraphIcon />,
       isActive: state.paragraph,
       onClick: () => setParagraph(editor),
     },
     {
       label: '标题 1',
       value: 'h1',
+      icon: <Heading1Icon />,
       isActive: state.heading1,
       onClick: () => setHeading(editor, 1),
     },
     {
       label: '标题 2',
       value: 'h2',
+      icon: <Heading2Icon />,
       isActive: state.heading2,
       onClick: () => setHeading(editor, 2),
     },
     {
       label: '标题 3',
       value: 'h3',
+      icon: <Heading3Icon />,
       isActive: state.heading3,
       onClick: () => setHeading(editor, 3),
     },
@@ -146,7 +153,7 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
       {finalConfig.showHeadings && (
         <ToolbarGroup>
           <ToolbarDropdown
-            trigger={<HeadingIcon />}
+            trigger={state.paragraph ? <ParagraphIcon /> : state.heading1 ? <Heading1Icon /> : state.heading2 ? <Heading2Icon /> : state.heading3 ? <Heading3Icon /> : <ParagraphIcon />}
             title="标题"
             options={getHeadingOptions()}
           />
@@ -169,7 +176,7 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
             onClick={() => toggleItalic(editor)}
           />
           <ToolbarButton
-            icon={<StrikeIcon />}
+            icon={<StrikethroughIcon />}
             title="删除线"
             isActive={state.strike}
             onClick={() => toggleStrike(editor)}
@@ -187,7 +194,7 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
       {finalConfig.showLists && (
         <ToolbarGroup>
           <ToolbarButton
-            icon={<BulletListIcon />}
+            icon={<UnorderedListIcon />}
             title="无序列表"
             isActive={state.bulletList}
             onClick={() => toggleBulletList(editor)}

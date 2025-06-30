@@ -2,7 +2,6 @@ export {
   isContentEmpty,
   getPlainText,
   getContentSummary,
-  getWordCount,
   sanitizeContent,
   markdownToHtml,
   htmlToMarkdown,

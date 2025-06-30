@@ -51,7 +51,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
       data: { 
          nodeType: selectedNodeType.id,
          title: selectedNodeType.name,
-         content: selectedNodeType.description 
+         
        },
     };
     addNode(newNode);
@@ -105,7 +105,6 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
                 <span>{nodeType.icon}</span>
                  <div>
                    <div className="font-medium">{nodeType.name}</div>
-                   <div className="text-xs text-gray-500 dark:text-gray-400">{nodeType.description}</div>
                  </div>
               </button>
             ))}

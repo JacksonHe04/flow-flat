@@ -83,6 +83,27 @@ const MarkdownNode: React.FC<MarkdownNodeProps> = ({
   }, [onBlur]);
 
   /**
+   * 处理键盘事件，阻止删除键等事件冒泡到父组件
+   */
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // 阻止删除键、退格键、方向键等编辑相关按键的事件冒泡
+    if (
+      e.key === 'Delete' ||
+      e.key === 'Backspace' ||
+      e.key === 'ArrowUp' ||
+      e.key === 'ArrowDown' ||
+      e.key === 'ArrowLeft' ||
+      e.key === 'ArrowRight' ||
+      e.key === 'Enter' ||
+      e.key === 'Tab' ||
+      e.key === 'Escape' ||
+      (e.ctrlKey || e.metaKey) // Ctrl/Cmd + 任意键的组合
+    ) {
+      e.stopPropagation();
+    }
+  }, []);
+
+  /**
    * 获取编辑器扩展
    */
   const getExtensions = useCallback(() => {
@@ -139,6 +160,8 @@ const MarkdownNode: React.FC<MarkdownNodeProps> = ({
       <div 
         className="markdown-node-editor"
         style={getEditorStyle()}
+        onKeyDown={handleKeyDown}
+        tabIndex={-1}
       >
         <EditorContent
           editor={editor}

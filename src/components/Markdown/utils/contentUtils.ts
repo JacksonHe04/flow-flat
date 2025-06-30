@@ -34,18 +34,6 @@ export const getContentSummary = (content: string, maxLength: number = 100): str
 };
 
 /**
- * 计算内容字数
- */
-export const getWordCount = (content: string): number => {
-  const plainText = getPlainText(content);
-  // 中文字符按字计算，英文按单词计算
-  const chineseChars = (plainText.match(/[\u4e00-\u9fa5]/g) || []).length;
-  const englishWords = plainText.replace(/[\u4e00-\u9fa5]/g, '').trim().split(/\s+/).filter(word => word.length > 0).length;
-  
-  return chineseChars + englishWords;
-};
-
-/**
  * 清理HTML内容
  */
 export const sanitizeContent = (content: string): string => {

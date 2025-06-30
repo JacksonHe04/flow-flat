@@ -20,7 +20,7 @@ const ImageNode: React.FC<NodeProps<Node<ImageNodeData>>> = ({ id, data, selecte
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(data?.imageUrl || '');
   const [title, setTitle] = useState(data?.title || '图片节点');
-  const [alt, setAlt] = useState(data?.alt || '图片描述');
+  const [alt, setAlt] = useState(data?.alt);
   const [description, setDescription] = useState(data?.description || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
 

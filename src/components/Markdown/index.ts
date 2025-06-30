@@ -1,6 +1,6 @@
 // 主要组件导出
 export { default as RichTextEditor, type RichTextEditorProps } from './RichText';
-export { default as MarkdownNode, type MarkdownNodeProps } from './MarkdownNode';
+export { default as MarkdownNode, type MarkdownNodeProps } from './MarkdownNodeEditor';
 export { default as MarkdownEditor, type MarkdownEditorProps } from './MarkdownEditor';
 
 // 工具栏组件导出
@@ -62,7 +62,6 @@ export {
   isContentEmpty,
   getPlainText,
   getContentSummary,
-  getWordCount,
   sanitizeContent,
   markdownToHtml,
   htmlToMarkdown,

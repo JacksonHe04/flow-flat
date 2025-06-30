@@ -3,7 +3,7 @@ import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
 import NodeContainer from './NodeContainer';
 import NodeHeader from './NodeHeader';
-import MarkdownNodeEditor from '@/components/Markdown/MarkdownNode';
+import MarkdownNodeEditor from '@/components/Markdown/MarkdownNodeEditor';
 
 interface MarkdownNodeData extends Record<string, unknown> {
   title?: string;
@@ -17,7 +17,7 @@ interface MarkdownNodeData extends Record<string, unknown> {
 const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, selected }) => {
   const { updateNodeData } = useNodeStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [markdown, setMarkdown] = useState(data?.content || '# 标题\n\n双击编辑Markdown内容\n\n- 列表项1\n- 列表项2');
+  const [markdown, setMarkdown] = useState(data?.content);
   const [title, setTitle] = useState(data?.title || 'Markdown节点');
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
@@ -34,10 +34,6 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
       updateNodeData(id, { content: markdown, title });
     }
   }, [id, markdown, title, data?.content, data?.title, updateNodeData]);
-
-  /**
-   * 处理双击事件，切换到编辑模式
-   */
 
   /**
    * 处理焦点事件，自动切换到编辑模式
@@ -59,6 +55,7 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
     <NodeContainer 
       selected={selected} 
       onDelete={data?.onDelete}
+      className="min-w-80 w-80"
     >
       <NodeHeader
         nodeType="markdown"
@@ -74,7 +71,7 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
         onFocus={handleFocus}
         editable={isEditing}
         autoFocus={isEditing}
-        placeholder="输入Markdown内容..."
+        placeholder="输入Markdown内d容..."
         className="w-full flex-1"
         minHeight={100}
         maxHeight={300}

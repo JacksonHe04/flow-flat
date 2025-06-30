@@ -7,6 +7,8 @@ import { immer } from 'zustand/middleware/immer';
 export interface CodeProject {
   id: string;
   title: string;
+  content: string;
+  language: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -55,6 +57,8 @@ export const useCodeStore = create<CodeState & CodeActions>()(immer((set) => ({
     {
       id: '1',
       title: '示例Code项目',
+      content: '// 欢迎使用代码编辑器\nconsole.log("Hello, World!");\n\n// 这是一个示例JavaScript代码\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\nconst message = greet("开发者");\nconsole.log(message);',
+      language: 'javascript',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }

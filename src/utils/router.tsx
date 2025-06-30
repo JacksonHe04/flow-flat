@@ -1,5 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from '@/components/Layout/Layout';
 import Home from '@/pages/home';
 import BoardList from '@/pages/boards';
@@ -7,6 +6,7 @@ import Board from '@/pages/boards/components/Board';
 import MarkdownList from '@/pages/markdown';
 import MarkdownEditor from '@/components/Markdown/MarkdownEditor';
 import CodeList from '@/pages/code';
+import CodeEditor from '@/pages/code/components/CodeEditor';
 import Docs from '@/pages/docs';
 
 export const router = createBrowserRouter([
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/code/:id',
-        element: <div>代码编辑器页面</div>,
+        element: <CodeEditor />,
       },
       {
         path: '/docs',

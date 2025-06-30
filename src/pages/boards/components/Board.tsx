@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../../store';
 import NodeContainer from '../../../components/Node/NodeContainer';
@@ -19,7 +18,6 @@ const ZOOM_SPEED = 0.001;
 const DEFAULT_NODE_SIZE = { width: 200, height: 150 };
 
 const Board: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const nodes = useSelector((state: RootState) => state.nodes.nodes);
   const selectedNodeIds = useSelector((state: RootState) => state.nodes.selectedNodeIds);
@@ -155,7 +153,7 @@ const Board: React.FC = () => {
               {node.type === 'richtext' ? (
                 <RichTextNode
                   id={node.id}
-                  content={node.data?.content || '双击编辑文本'}
+                  content={String(node.data?.content || '双击编辑文本')}
                 />
               ) : (
                 <div className="p-4">{node.type}</div>
@@ -168,4 +166,4 @@ const Board: React.FC = () => {
   );
 };
 
-export default Board; 
+export default Board;

@@ -15,7 +15,7 @@ export interface Node {
   type: 'component' | 'code' | 'richtext';
   position: Position;
   size: Size;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 interface NodeState {
@@ -59,7 +59,7 @@ const nodeSlice = createSlice({
     },
     updateNodeData: (
       state,
-      action: PayloadAction<{ id: string; data: any }>
+      action: PayloadAction<{ id: string; data: Record<string, unknown> }>
     ) => {
       const node = state.nodes[action.payload.id];
       if (node) {
@@ -91,4 +91,4 @@ export const {
   clearSelection,
 } = nodeSlice.actions;
 
-export default nodeSlice.reducer; 
+export default nodeSlice.reducer;

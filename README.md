@@ -1,99 +1,135 @@
-# Flow-Flat 项目介绍
+# Flow Flat 节点流程图平台
 
 ## 项目概述
 
-Flow-Flat 是一个创新的智能白板平台，融合了 Notion 的"区块"理念和苹果"无边记"（Freeform）的自由白板体验。它允许用户在无限画布上创建、编辑和连接各种类型的节点，每个节点可以是组件、代码块或富文本内容。同时，平台集成了 AI 助手功能，为用户提供智能化的创作支持。
-
-## 核心特性
-
-### 1. 自由白板
-- 无限画布，支持自由缩放和拖拽
-- 支持多个白板的创建和管理
-- 白板内容可保存和编辑
-
-### 2. 多样化节点
-- **组件节点**：可插入自研UI组件
-- **代码节点**：支持代码编辑和高亮
-- **富文本节点**：支持 Markdown 编辑和预览
-- 节点间可建立连接关系
-
-### 3. AI 助手
-- 全局 AI 页面：独立的 AI 对话界面
-- 悬浮 AI 助手：每个页面右下角的快速访问入口
+Flow Flat 是一个整合节点流程图、富文本编辑器、代码编辑器三大核心功能模块的集成开发平台。平台提供可视化的节点流程图编辑能力，同时内置强大的富文本编辑器和代码编辑器，为用户提供一站式的创作和开发体验。
 
 ## 技术架构
 
 ### 前端技术栈
 - **框架**：React + TypeScript
 - **构建工具**：Vite
-- **状态管理**：Redux Toolkit
-- **路由**：React Router
+- **状态管理**：Zustand
+- **节点流程图**：React Flow
+- **代码编辑器**：Monaco Editor
 - **样式**：Tailwind CSS
-- **代码高亮**：Prism.js
-- **Markdown 解析**：Marked.js
 
-### 项目结构
+## 核心特性
+
+### 1. 可视化节点流程图
+- 集成 React Flow 实现可视化节点流程图编辑器
+- 支持拖拽、连线、节点配置等交互功能
+- 提供丰富的节点类型和连接方式
+- 支持流程图的导入导出功能
+
+### 2. 富文本编辑器
+- 内置强大的富文本编辑器
+- 支持 Markdown 语法编写和解析
+- 提供实时预览功能
+- 支持文本格式化和样式设置
+
+### 3. 代码编辑器
+- 集成 Monaco Editor 专业代码编辑器
+- 提供语法高亮显示
+- 支持代码补全和智能提示
+- 内置错误检测和提示功能
+- 支持多种编程语言
+
+### 4. 轻量级状态管理
+- 使用 Zustand 进行状态管理
+- 实现跨组件的数据共享
+- 支持响应式数据更新
+- 简化状态管理复杂度
+
+## 项目结构
 ```
 /src
-  /components      // 自研基础组件库
-  /editor          // 代码编辑器模块
-  /richtext        // 富文本/Markdown编辑器模块
-  /flow            // 节点流程图模块
+  /components      // 基础组件库
   /pages           // 页面级组件
-  /store           // Redux相关
+    /boards        // 节点流程图页面
+    /docs          // 文档页面
+    /richtext      // 富文本编辑页面
+    /ide           // 代码编辑页面
+  /store           // Zustand状态管理
   /router          // 路由配置
-  /api             // 与后端交互
+  /api             // API接口
   /utils           // 工具函数
+  /styles          // 样式文件
 ```
-
-## 开发计划
-
-项目采用 7 天 MVP 开发计划，每天聚焦一个核心功能：
-
-1. **第1天**：项目初始化与基础架构
-2. **第2天**：白板画布与节点系统雏形
-3. **第3天**：组件节点实现
-4. **第4天**：代码节点实现
-5. **第5天**：富文本节点实现
-6. **第6天**：节点连线与数据管理
-7. **第7天**：AI助手与基础优化
-
-## 设计理念
-
-- **简洁现代**：采用 Fluent Design 和 macOS Big Sur 的设计语言
-- **模块化**：所有内容都是可组合的节点
-- **智能辅助**：AI 助手随时提供支持
-- **自由创作**：无限画布，无拘无束的创作空间
 
 ## 数据结构
 
 ```typescript
-interface Board {
+/**
+ * 节点流程图数据结构
+ */
+interface FlowBoard {
   id: string;
   name: string;
-  nodes: Node[];
-  edges: Edge[];
+  nodes: FlowNode[];
+  edges: FlowEdge[];
+  viewport: Viewport;
 }
 
-interface Node {
+/**
+ * 流程图节点
+ */
+interface FlowNode {
   id: string;
-  type: 'component' | 'code' | 'richtext';
+  type: string;
   position: { x: number; y: number };
-  size: { width: number; height: number };
   data: any;
 }
 
-interface Edge {
-  from: string;
-  to: string;
-  // 其他连线属性
+/**
+ * 流程图连线
+ */
+interface FlowEdge {
+  id: string;
+  source: string;
+  target: string;
+  type?: string;
+}
+
+/**
+ * 富文本文档
+ */
+interface RichTextDoc {
+  id: string;
+  title: string;
+  content: string;
+  format: 'markdown' | 'html';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * 代码文件
+ */
+interface CodeFile {
+  id: string;
+  name: string;
+  language: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 ```
 
+## 开发特性
+
+- **模块化架构**：各功能模块独立开发，便于维护和扩展
+- **TypeScript 支持**：提供完整的类型定义，提升开发体验
+- **响应式设计**：适配不同屏幕尺寸和设备
+- **热重载开发**：基于 Vite 的快速开发体验
+- **组件复用**：构建可复用的组件库
+
 ## 后续规划
 
-1. 完善节点类型和功能
-2. 增强 AI 助手能力
-3. 添加协作功能
-4. 优化性能和用户体验
-5. 支持更多导入导出格式
+1. 增强节点流程图的交互功能
+2. 扩展富文本编辑器的功能特性
+3. 优化代码编辑器的性能和体验
+4. 添加协作和分享功能
+5. 支持更多文件格式的导入导出
+6. 集成 AI 辅助功能
+7. 添加插件系统支持扩展

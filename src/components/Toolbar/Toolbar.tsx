@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { addNode, removeNode } from '../../store/slices/nodeSlice';
+import { addNode } from '../../store/slices/nodeSlice';
 
 interface ToolbarProps {
   zoom: number;
@@ -103,4 +103,4 @@ const Toolbar: React.FC<ToolbarProps> = ({
   );
 };
 
-export default Toolbar; 
+export default Toolbar;

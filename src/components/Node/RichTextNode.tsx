@@ -27,7 +27,7 @@ const RichTextNode: React.FC<RichTextNodeProps> = ({ id, content }) => {
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      e.currentTarget.blur();
+      (e.currentTarget as HTMLElement).blur();
     }
   }, []);
 
@@ -60,4 +60,4 @@ const RichTextNode: React.FC<RichTextNodeProps> = ({ id, content }) => {
   );
 };
 
-export default RichTextNode; 
+export default RichTextNode;

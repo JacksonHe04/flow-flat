@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 /**
- * IDE项目接口
+ * Code项目接口
  */
-export interface IdeProject {
+export interface CodeProject {
   id: string;
   title: string;
   createdAt: string;
@@ -12,30 +12,30 @@ export interface IdeProject {
 }
 
 /**
- * IDE状态接口
+ * Code状态接口
  */
-interface IdeState {
-  items: IdeProject[];
+interface CodeState {
+  items: CodeProject[];
   loading: boolean;
   error: string | null;
 }
 
 /**
- * IDE操作接口
+ * Code操作接口
  */
-interface IdeActions {
+interface CodeActions {
   /**
-   * 添加IDE项目
+   * 添加Code项目
    */
-  addProject: (project: IdeProject) => void;
+  addProject: (project: CodeProject) => void;
   /**
-   * 删除IDE项目
+   * 删除Code项目
    */
   removeProject: (id: string) => void;
   /**
-   * 更新IDE项目
+   * 更新Code项目
    */
-  updateProject: (project: IdeProject) => void;
+  updateProject: (project: CodeProject) => void;
   /**
    * 设置加载状态
    */
@@ -47,14 +47,14 @@ interface IdeActions {
 }
 
 /**
- * IDE状态管理store
+ * Code状态管理store
  */
-export const useIdeStore = create<IdeState & IdeActions>()(immer((set) => ({
+export const useCodeStore = create<CodeState & CodeActions>()(immer((set) => ({
   // 初始状态
   items: [
     {
       id: '1',
-      title: '示例IDE项目',
+      title: '示例Code项目',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }

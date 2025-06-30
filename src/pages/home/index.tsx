@@ -13,7 +13,7 @@ const Home: React.FC = () => {
           Flow Flat
         </h1>
         <h2 className="text-5xl font-bold text-slate-800 dark:text-white mb-4 drop-shadow-sm">
-        集成白板｜Markdown｜IDE 等工具
+        集成白板｜Markdown｜Code Editor 等工具
         </h2>
         <p className="text-lg text-slate-700 dark:text-slate-300 mb-8">
         简洁 · 现代 · 高效的节点流程图平台

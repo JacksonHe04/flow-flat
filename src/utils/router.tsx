@@ -5,7 +5,8 @@ import Home from '@/pages/home';
 import BoardList from '@/pages/boards';
 import Board from '@/pages/boards/components/Board';
 import MarkdownList from '@/pages/markdown';
-import IdeList from '@/pages/ide';
+import CodeList from '@/pages/code';
+import Docs from '@/pages/docs';
 
 export const router = createBrowserRouter([
   {
@@ -38,12 +39,16 @@ export const router = createBrowserRouter([
         element: <div>Markdown编辑器页面</div>,
       },
       {
-        path: '/ide',
-        element: <IdeList />,
+        path: '/code',
+        element: <CodeList />,
       },
       {
-        path: '/ide/:id',
-        element: <div>IDE编辑器页面</div>,
+        path: '/code/:id',
+        element: <div>代码编辑器页面</div>,
+      },
+      {
+        path: '/docs',
+        element: <Docs />,
       },
     ],
   },

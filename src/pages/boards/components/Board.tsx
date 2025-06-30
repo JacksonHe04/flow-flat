@@ -1,180 +1,147 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import NodeContainer from '../../../components/Node/NodeContainer';
-import RichTextNode from '../../../components/Node/RichTextNode';
+import { useCallback, useEffect } from 'react';
+import {
+  ReactFlow,
+  type Node,
+  addEdge,
+  useNodesState,
+  useEdgesState,
+  type OnConnect,
+  Controls,
+  MiniMap,
+  Background,
+  BackgroundVariant,
+  Panel,
+  type NodeTypes,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import Toolbar from '../../../components/Toolbar/Toolbar';
-import { useNodeStore, type Node } from '../../../stores/nodeStore';
+import RichTextNode from '../../../components/Node/RichTextNode';
+import { useNodeStore } from '../../../stores/nodeStore';
 
-const MIN_ZOOM = 0.1;
-const MAX_ZOOM = 3;
-const ZOOM_SPEED = 0.001;
-const DEFAULT_NODE_SIZE = { width: 200, height: 150 };
+// 定义自定义节点类型
+const nodeTypes: NodeTypes = {
+  richtext: RichTextNode,
+};
 
 const Board: React.FC = () => {
-  const { 
-    nodes, 
-    selectedNodeIds, 
-    updateNodePosition, 
-    clearSelection, 
-    addNode, 
-    removeNode 
-  } = useNodeStore();
+  const { nodes: storeNodes, addNode, removeNode, updateNodePosition } = useNodeStore();
+  
+  // 将store中的节点转换为React Flow节点格式
+  const convertToReactFlowNodes = useCallback(() => {
+    return Object.values(storeNodes).map(node => ({
+      id: node.id,
+      type: node.type,
+      position: node.position,
+      data: {
+        ...node.data,
+        onDelete: () => removeNode(node.id),
+      },
+      style: {
+        width: node.size.width,
+        height: node.size.height,
+      },
+    }));
+  }, [storeNodes, removeNode]);
 
-  const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [isPanning, setIsPanning] = useState(false);
-  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [nodes, setNodes, onNodesChange] = useNodesState(convertToReactFlowNodes());
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // 处理缩放
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-    const delta = -e.deltaY * ZOOM_SPEED;
-    setZoom(z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z + delta)));
-  }, []);
-
-  /**
-   * 处理画布平移
-   */
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 1 || e.button === 2) { // 中键或右键
-      e.preventDefault();
-      setIsPanning(true);
-      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-      clearSelection();
-    }
-  }, [pan, clearSelection]);
-
-  /**
-   * 处理鼠标移动
-   */
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isPanning) {
-      setPan({
-        x: e.clientX - panStart.x,
-        y: e.clientY - panStart.y,
-      });
-    }
-  }, [isPanning, panStart]);
-
-  /**
-   * 处理鼠标抬起
-   */
-  const handleMouseUp = useCallback(() => {
-    setIsPanning(false);
-  }, []);
-
-  /**
-   * 处理双击创建节点
-   */
-  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-    // 确保双击的是画布而不是节点
-    if ((e.target as HTMLElement).id === 'board-canvas') {
-      const rect = (e.target as HTMLElement).getBoundingClientRect();
-      const x = (e.clientX - rect.left - pan.x) / zoom;
-      const y = (e.clientY - rect.top - pan.y) / zoom;
-      
-      const newNode: Node = {
-        id: `node-${Date.now()}`,
-        type: 'richtext',
-        position: { x, y },
-        size: DEFAULT_NODE_SIZE,
-        data: { content: '双击编辑文本' }
-      };
-      
-      addNode(newNode);
-    }
-  }, [addNode, pan, zoom]);
-
-  /**
-   * 处理节点位置更新
-   */
-  const handleNodePositionChange = useCallback((id: string, newPosition: { x: number; y: number }) => {
-    updateNodePosition(id, newPosition);
-  }, [updateNodePosition]);
-
-  /**
-   * 处理节点删除
-   */
-  const handleDeleteNode = useCallback((id: string) => {
-    removeNode(id);
-  }, [removeNode]);
-
-  /**
-   * 处理画布重置
-   */
-  const handleResetCanvas = useCallback(() => {
-    setZoom(1);
-    setPan({ x: 0, y: 0 });
-  }, []);
-
+  // 同步store节点到React Flow节点
   useEffect(() => {
-    const canvas = document.getElementById('board-canvas');
-    canvas?.addEventListener('wheel', handleWheel, { passive: false });
-    return () => {
-      canvas?.removeEventListener('wheel', handleWheel);
-    };
-  }, [handleWheel]);
+    setNodes(convertToReactFlowNodes());
+  }, [storeNodes, convertToReactFlowNodes, setNodes]);
 
-  // 添加键盘快捷键支持
+  /**
+   * 处理节点连接
+   */
+  const onConnect: OnConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
+
+  /**
+   * 处理节点拖拽结束，更新store中的位置
+   */
+  const onNodeDragStop = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      updateNodePosition(node.id, node.position);
+    },
+    [updateNodePosition]
+  );
+
+  /**
+   * 处理画布点击创建节点（使用 useReactFlow 获取正确的坐标）
+   */
+  const onPaneClick = useCallback(
+    (event: React.MouseEvent) => {
+      // 简化为单击创建节点，因为 React Flow 12 没有 onPaneDoubleClick
+      const reactFlowBounds = (event.target as HTMLElement).getBoundingClientRect();
+      const position = {
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      };
+
+      const newNode = {
+        id: `node-${Date.now()}`,
+        type: 'richtext' as const,
+        position,
+        size: { width: 200, height: 150 },
+        data: { content: '点击编辑文本' },
+      };
+
+      addNode(newNode);
+    },
+    [addNode]
+  );
+
+  /**
+   * 处理删除选中节点
+   */
+  const handleDeleteSelected = useCallback(() => {
+    nodes.forEach(node => {
+      // React Flow 节点的 selected 属性
+      if ('selected' in node && node.selected) {
+        removeNode(node.id);
+      }
+    });
+  }, [nodes, removeNode]);
+
+  // 键盘快捷键支持
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        selectedNodeIds.forEach(id => handleDeleteNode(id));
+        handleDeleteSelected();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedNodeIds, handleDeleteNode]);
+  }, [handleDeleteSelected]);
 
   return (
-    <div
-      id="board-canvas"
-      className="
-        fixed inset-0 top-16 overflow-hidden
-        bg-slate-50 dark:bg-slate-900
-        transition-colors duration-200
-      "
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onContextMenu={e => e.preventDefault()}
-      onDoubleClick={handleDoubleClick}
-    >
-      <Toolbar
-        zoom={zoom}
-        onZoomChange={setZoom}
-        onResetCanvas={handleResetCanvas}
-      />
-      <div
-        className="absolute inset-0 origin-center"
-        style={{
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-        }}
+    <div className="fixed inset-0 top-16 bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeDragStop={onNodeDragStop}
+        onPaneClick={onPaneClick}
+        nodeTypes={nodeTypes}
+        fitView
+        className="bg-slate-50 dark:bg-slate-900"
       >
-        {Object.values(nodes).map((node: Node) => (
-          <NodeContainer
-            key={node.id}
-            id={node.id}
-            position={node.position}
-            size={node.size}
-            selected={selectedNodeIds.includes(node.id)}
-            onPositionChange={handleNodePositionChange}
-            onDelete={() => handleDeleteNode(node.id)}
-          >
-            <div className="w-full h-full bg-white dark:bg-slate-800 rounded-lg shadow-md">
-              {node.type === 'richtext' ? (
-                <RichTextNode
-                  id={node.id}
-                  content={String(node.data?.content || '双击编辑文本')}
-                />
-              ) : (
-                <div className="p-4">{node.type}</div>
-              )}
-            </div>
-          </NodeContainer>
-        ))}
-      </div>
+        <Controls className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+        <MiniMap 
+          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+          nodeColor="#10b981"
+        />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} className="bg-slate-100 dark:bg-slate-800" />
+        <Panel position="top-center">
+          <Toolbar onDeleteSelected={handleDeleteSelected} />
+        </Panel>
+      </ReactFlow>
     </div>
   );
 };

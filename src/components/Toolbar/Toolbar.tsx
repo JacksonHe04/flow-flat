@@ -1,18 +1,15 @@
 import React from 'react';
+import { useReactFlow } from '@xyflow/react';
 import { useNodeStore } from '../../stores/nodeStore';
 
 interface ToolbarProps {
-  zoom: number;
-  onZoomChange: (zoom: number) => void;
-  onResetCanvas: () => void;
+  onDeleteSelected: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({
-  zoom,
-  onZoomChange,
-  onResetCanvas,
-}) => {
-  const { addNode, selectedNodeIds, removeNode } = useNodeStore();
+const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
+  const { addNode } = useNodeStore();
+  const { zoomIn, zoomOut, fitView, getZoom } = useReactFlow();
+  const zoom = getZoom();
 
   /**
    * 处理添加节点
@@ -20,87 +17,55 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const handleAddNode = () => {
     const newNode = {
       id: `node-${Date.now()}`,
-      type: 'component' as const,
+      type: 'richtext' as const,
       position: { x: 100, y: 100 },
       size: { width: 200, height: 150 },
-      data: {},
+      data: { content: '新建节点' },
     };
     addNode(newNode);
   };
 
   /**
-   * 处理删除选中的节点
+   * 处理重置画布
    */
-  const handleRemoveSelectedNodes = () => {
-    selectedNodeIds.forEach(id => removeNode(id));
+  const handleResetCanvas = () => {
+    fitView();
   };
 
   return (
-    <div className="
-      fixed top-4 left-1/2 -translate-x-1/2
-      flex items-center gap-2 p-2
-      bg-white/80 dark:bg-slate-800/80
-      backdrop-blur-sm rounded-lg shadow-lg
-      border border-slate-200 dark:border-slate-700
-      transition-all duration-200
-    ">
+    <div className="toolbar flex items-center gap-2 p-2">
       <button
         onClick={handleAddNode}
-        className="
-          p-2 rounded-md
-          bg-emerald-500 text-white
-          hover:bg-emerald-600
-          transition-colors duration-200
-        "
+        className="btn btn-primary"
       >
         添加节点
       </button>
       <button
-        onClick={handleRemoveSelectedNodes}
-        className="
-          p-2 rounded-md
-          bg-red-500 text-white
-          hover:bg-red-600
-          transition-colors duration-200
-        "
+        onClick={onDeleteSelected}
+        className="btn btn-error"
       >
         删除节点
       </button>
-      <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2" />
+      <div className="divider" />
       <button
-        onClick={() => onZoomChange(zoom - 0.1)}
-        className="
-          p-2 rounded-md
-          bg-slate-100 dark:bg-slate-700
-          hover:bg-slate-200 dark:hover:bg-slate-600
-          transition-colors duration-200
-        "
+        onClick={() => zoomOut()}
+        className="btn"
       >
         -
       </button>
-      <span className="min-w-[3rem] text-center">
+      <span className="min-w-[3rem] text-center text-secondary">
         {Math.round(zoom * 100)}%
       </span>
       <button
-        onClick={() => onZoomChange(zoom + 0.1)}
-        className="
-          p-2 rounded-md
-          bg-slate-100 dark:bg-slate-700
-          hover:bg-slate-200 dark:hover:bg-slate-600
-          transition-colors duration-200
-        "
+        onClick={() => zoomIn()}
+        className="btn"
       >
         +
       </button>
-      <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2" />
+      <div className="divider" />
       <button
-        onClick={onResetCanvas}
-        className="
-          p-2 rounded-md
-          bg-slate-100 dark:bg-slate-700
-          hover:bg-slate-200 dark:hover:bg-slate-600
-          transition-colors duration-200
-        "
+        onClick={handleResetCanvas}
+        className="btn"
       >
         重置画布
       </button>

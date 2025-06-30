@@ -20,7 +20,7 @@ const Home: React.FC = () => {
         </p>
         <div className="flex justify-center space-x-4">
           <a
-            href="new"
+            href="board/new"
             className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
             Try Now
@@ -41,11 +41,11 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mt-16">
+      <div className="flex flex-wrap justify-center gap-6 w-full max-w-6xl mt-16">
         {/* 动态生成卡片 */}
         {homeNavItems.map((item) => (
           <Link to={item.url} key={item.url} className="block">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-8 flex flex-col items-center text-center h-full">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-8 flex flex-col items-center text-center h-full w-64">
               {/* 这里可以根据item.url或者其他属性来决定显示不同的图标 */}
               <img src="/logo.png" alt={item.label} className="w-16 h-16 mb-4" />
               <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">{item.label}</h3>

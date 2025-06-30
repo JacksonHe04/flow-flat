@@ -13,19 +13,17 @@ const Home: React.FC = () => {
           Flow Flat
         </h1>
         <h2 className="text-5xl font-bold text-slate-800 dark:text-white mb-4 drop-shadow-sm">
-        集成白板、Markdown、IDE、组件库等多种工具
-          <br />
-          助力你的创意与协作
+        集成白板｜Markdown｜IDE 等工具
         </h2>
         <p className="text-lg text-slate-700 dark:text-slate-300 mb-8">
-        简洁 · 现代 · 高效的多功能协作平台
+        简洁 · 现代 · 高效的节点流程图平台
         </p>
         <div className="flex justify-center space-x-4">
           <a
-            href="#"
+            href="new"
             className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
-            What is Flow Flat?
+            Try Now
           </a>
           <a
             href="/docs"
@@ -36,6 +34,7 @@ const Home: React.FC = () => {
           <a
             href="https://github.com/JacksonHe04/flow-flat"
             className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+            target="_blank"
           >
             GitHub
           </a>
@@ -58,8 +57,26 @@ const Home: React.FC = () => {
         ))}
       </div>
 
-      <footer className="mt-16 text-xs text-slate-400 dark:text-slate-600">
+      <footer className="mt-16 text-xs text-slate-400 dark:text-slate-600 text-center">
       © {new Date().getFullYear()} Flow Flat. Inspired by Coze, Notion, Lark, Apple, Claude.
+      <br />
+      <div className="flex justify-center items-center space-x-2 mt-1">
+        <a
+          href="https://github.com/JacksonHe04"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Github of JacksonHe04
+        </a>
+        <span>|</span>
+        <a
+          href="https://jacksonhe.notion.site"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Noiton of Jackson He
+        </a>
+      </div>
       </footer>
     </div>
   );

@@ -10,6 +10,12 @@
   --color-warning: #eab308;   /* 警告 - 黄色 */
   --color-error: #ef4444;     /* 错误 - 红色 */
   --color-info: #3b82f6;      /* 信息 - 蓝色 */
+  
+  /* React Flow Handle 组件样式 */
+  --xy-handle-width: 16px;
+  --xy-handle-height: 16px;
+  --xy-handle-background-color-source: var(--color-secondary);
+  --xy-handle-background-color-target: var(--color-primary);
 
     /* 中性色 */
   --color-neutral-50: #f8fafc;

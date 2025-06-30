@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ReactFlow,
   type Node,
@@ -12,19 +12,26 @@ import {
   BackgroundVariant,
   Panel,
   type NodeTypes,
+  useReactFlow,
+  ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import Toolbar from '../../../components/Toolbar/Toolbar';
-import RichTextNode from '../../../components/Node/RichTextNode';
-import { useNodeStore } from '../../../stores/nodeStore';
+import Toolbar from '@/components/Toolbar/Toolbar';
+import RichTextNode from '@/components/Node/RichTextNode';
+import { useNodeStore } from '@/stores/nodeStore';
 
 // 定义自定义节点类型
 const nodeTypes: NodeTypes = {
   richtext: RichTextNode,
 };
 
-const Board: React.FC = () => {
+/**
+ * 内部Board组件，使用useReactFlow hook
+ */
+const BoardInner: React.FC = () => {
   const { nodes: storeNodes, addNode, removeNode, updateNodePosition } = useNodeStore();
+  const { screenToFlowPosition } = useReactFlow();
+  const [lastClickTime, setLastClickTime] = useState(0);
   
   // 将store中的节点转换为React Flow节点格式
   const convertToReactFlowNodes = useCallback(() => {
@@ -70,28 +77,36 @@ const Board: React.FC = () => {
   );
 
   /**
-   * 处理画布点击创建节点（使用 useReactFlow 获取正确的坐标）
+   * 处理画布点击，检测双击创建节点
    */
   const onPaneClick = useCallback(
     (event: React.MouseEvent) => {
-      // 简化为单击创建节点，因为 React Flow 12 没有 onPaneDoubleClick
-      const reactFlowBounds = (event.target as HTMLElement).getBoundingClientRect();
-      const position = {
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      };
+      const currentTime = Date.now();
+      const timeDiff = currentTime - lastClickTime;
+      
+      // 检测双击（300ms内的两次点击）
+      if (timeDiff < 300 && timeDiff > 0) {
+        // 使用 screenToFlowPosition 获取正确的流程图坐标
+        const position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
 
-      const newNode = {
-        id: `node-${Date.now()}`,
-        type: 'richtext' as const,
-        position,
-        size: { width: 200, height: 150 },
-        data: { content: '点击编辑文本' },
-      };
+        const newNode = {
+          id: `node-${Date.now()}`,
+          type: 'richtext' as const,
+          position,
+          size: { width: 200, height: 150 },
+          data: { content: '点击编辑文本' },
+        };
 
-      addNode(newNode);
+        addNode(newNode);
+        setLastClickTime(0); // 重置点击时间
+      } else {
+        setLastClickTime(currentTime);
+      }
     },
-    [addNode]
+    [addNode, screenToFlowPosition, lastClickTime]
   );
 
   /**
@@ -143,6 +158,17 @@ const Board: React.FC = () => {
         </Panel>
       </ReactFlow>
     </div>
+  );
+};
+
+/**
+ * Board组件包装器，提供ReactFlowProvider上下文
+ */
+const Board: React.FC = () => {
+  return (
+    <ReactFlowProvider>
+      <BoardInner />
+    </ReactFlowProvider>
   );
 };
 

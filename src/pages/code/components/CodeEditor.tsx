@@ -340,7 +340,7 @@ const CodeEditor: React.FC = () => {
           value={content}
           onChange={handleContentChange}
           language={language}
-          theme="vs-dark"
+          theme="light"
           height="100%"
         />
       </div>

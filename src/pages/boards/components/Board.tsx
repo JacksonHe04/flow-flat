@@ -31,8 +31,9 @@ const nodeTypes: NodeTypes = {
  */
 const BoardInner: React.FC = () => {
   const { nodes: storeNodes, addNode, removeNode, updateNodePosition } = useNodeStore();
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, setViewport } = useReactFlow();
   const [lastClickTime, setLastClickTime] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // 将store中的节点转换为React Flow节点格式
   const convertToReactFlowNodes = useCallback(() => {
@@ -58,6 +59,15 @@ const BoardInner: React.FC = () => {
   useEffect(() => {
     setNodes(convertToReactFlowNodes());
   }, [storeNodes, convertToReactFlowNodes, setNodes]);
+
+  // 初始化画布，设置默认缩放为100%
+  useEffect(() => {
+    if (!isInitialized) {
+      // 设置默认缩放为100%（1.0）
+      setViewport({ x: 0, y: 0, zoom: 1 });
+      setIsInitialized(true);
+    }
+  }, [setViewport, isInitialized]);
 
   /**
    * 处理节点连接
@@ -150,7 +160,6 @@ const BoardInner: React.FC = () => {
         onNodeDragStop={onNodeDragStop}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
-        fitView
         className="bg-slate-50 dark:bg-slate-900"
       >
         <Controls className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />

@@ -9,7 +9,7 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
   const { addNode } = useNodeStore();
-  const { zoomIn, zoomOut, fitView, getZoom } = useReactFlow();
+  const { zoomIn, zoomOut, fitView, getZoom, screenToFlowPosition } = useReactFlow();
   const [zoom, setZoom] = useState(getZoom());
   const [selectedNodeType, setSelectedNodeType] = useState<NodeTypeConfig>(nodeTypes[0]);
   const [showNodeTypeMenu, setShowNodeTypeMenu] = useState(false);
@@ -43,10 +43,20 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
    * 处理添加节点
    */
   const handleAddNode = () => {
+    // 获取当前视图的中心位置
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    // 将屏幕坐标转换为流程图坐标
+    const flowPosition = screenToFlowPosition({
+      x: centerX,
+      y: centerY,
+    });
+    
     const newNode = {
       id: `node-${Date.now()}`,
       type: 'customNode' as const,
-      position: { x: 100, y: 100 },
+      position: flowPosition,
       size: { width: 200, height: 150 },
       data: { 
          nodeType: selectedNodeType.id,

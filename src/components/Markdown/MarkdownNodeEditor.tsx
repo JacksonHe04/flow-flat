@@ -190,19 +190,6 @@ const MarkdownNode: React.FC<MarkdownNodeProps> = ({
           " />
         )}
       </div>
-      
-      {/* 字数统计（仅在焦点时显示） */}
-      {isFocused && editor && (
-        <div className="
-          absolute bottom-1 right-2
-          text-xs text-gray-400 dark:text-gray-500
-          bg-white dark:bg-gray-800
-          px-1 rounded
-          pointer-events-none
-        ">
-          {editor.storage.characterCount?.characters() || 0}
-        </div>
-      )}
     </div>
   );
 };

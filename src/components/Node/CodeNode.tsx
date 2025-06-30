@@ -24,10 +24,7 @@ const CodeNode: React.FC<NodeProps<Node<CodeNodeData>>> = ({ id, data, selected 
   const [language, setLanguage] = useState(data?.language || 'javascript');
   const [isCompact, setIsCompact] = useState(true);
 
-  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEditing(true);
-  }, []);
+
 
   /**
    * 处理失去焦点，保存内容
@@ -72,6 +69,7 @@ const CodeNode: React.FC<NodeProps<Node<CodeNodeData>>> = ({ id, data, selected 
     <NodeContainer 
       selected={selected} 
       onDelete={data?.onDelete}
+      className="min-w-100"
     >
       <NodeHeader
         nodeType="code"
@@ -118,37 +116,27 @@ const CodeNode: React.FC<NodeProps<Node<CodeNodeData>>> = ({ id, data, selected 
       
       {/* 代码内容 */}
       <div className={`${isCompact ? 'h-32' : 'h-64'} transition-all duration-200`}>
-        {isEditing ? (
-          <MonacoEditor
-            value={code}
-            onChange={handleCodeChange}
-            language={language}
-            theme="vs-dark"
-            height="100%"
-            minimap={false}
-            fontSize={12}
-            lineNumbers="off"
-            wordWrap="on"
-            onMount={(editor) => {
-              // 编辑器失去焦点时保存
+        <MonacoEditor
+          value={code}
+          onChange={isEditing ? handleCodeChange : () => {}}
+          language={language}
+          theme="vs-dark"
+          height="100%"
+          minimap={false}
+          fontSize={12}
+          lineNumbers="off"
+          wordWrap="on"
+          readOnly={!isEditing}
+          compact={true}
+          onMount={(editor) => {
+            // 编辑器失去焦点时保存
+            if (isEditing) {
               editor.onDidBlurEditorText(() => {
                 handleBlur();
               });
-            }}
-          />
-        ) : (
-          <pre
-            className="
-              w-full h-full bg-gray-900 text-green-400 
-              font-mono text-xs p-2 rounded cursor-text
-              overflow-auto whitespace-pre-wrap
-              border border-gray-600
-            "
-            onDoubleClick={handleDoubleClick}
-          >
-            {code || '// 双击编辑代码'}
-          </pre>
-        )}
+            }
+          }}
+        />
       </div>
     </NodeContainer>
   );

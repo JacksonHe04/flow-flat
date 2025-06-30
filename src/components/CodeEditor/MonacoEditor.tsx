@@ -14,6 +14,7 @@ interface MonacoEditorProps {
   fontSize?: number;
   wordWrap?: 'on' | 'off' | 'wordWrapColumn' | 'bounded';
   lineNumbers?: 'on' | 'off' | 'relative' | 'interval';
+  compact?: boolean;
   onMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void;
 }
 
@@ -25,7 +26,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
   value,
   onChange,
   language,
-  theme = 'vs-dark',
+  theme = 'light',
   height = '400px',
   width = '100%',
   readOnly = false,
@@ -33,6 +34,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
   fontSize = 14,
   wordWrap = 'on',
   lineNumbers = 'on',
+  compact = false,
   onMount,
 }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -126,19 +128,25 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
         readOnly,
         cursorStyle: 'line',
         automaticLayout: true,
-        glyphMargin: true,
-        folding: true,
-        lineDecorationsWidth: 20,
-        lineNumbersMinChars: 3,
-        renderLineHighlight: 'all',
+        glyphMargin: compact ? false : true,
+        folding: compact ? false : true,
+        lineDecorationsWidth: compact ? 8 : 20,
+        lineNumbersMinChars: compact ? 2 : 3,
+        renderLineHighlight: compact ? 'none' : 'all',
         contextmenu: true,
         mouseWheelZoom: true,
         smoothScrolling: true,
         cursorBlinking: 'blink',
         cursorSmoothCaretAnimation: 'on',
         renderWhitespace: 'selection',
-        showFoldingControls: 'always',
-        foldingHighlight: true,
+        showFoldingControls: compact ? 'never' : 'always',
+        foldingHighlight: compact ? false : true,
+        hideCursorInOverviewRuler: compact ? true : false,
+        overviewRulerBorder: compact ? false : true,
+        scrollbar: compact ? {
+          vertical: 'hidden',
+          horizontal: 'hidden'
+        } : undefined,
         bracketPairColorization: {
           enabled: true,
         },

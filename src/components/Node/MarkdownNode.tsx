@@ -55,7 +55,7 @@ const MarkdownNode: React.FC<NodeProps<Node<MarkdownNodeData>>> = ({ id, data, s
     <NodeContainer 
       selected={selected} 
       onDelete={data?.onDelete}
-      className="min-w-80 w-80"
+      className="min-w-80"
     >
       <NodeHeader
         nodeType="markdown"

@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Layout from '@/components/Layout/Layout';
 import Home from '@/pages/home';
 import BoardList from '@/pages/boards';
@@ -12,6 +13,11 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
+      },
+      // 把/home重定向到/
+      {
+        path: '/home',
+        element: <Navigate to="/" replace />,
       },
       {
         path: '/boards',

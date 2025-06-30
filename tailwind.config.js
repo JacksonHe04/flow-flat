@@ -8,7 +8,10 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#10b981', // emerald-400
+          DEFAULT: '#4fa89a', // 主要品牌色
+        },
+        secondary: {
+          DEFAULT: '#122345', // 次要品牌色
         },
         success: '#22c55e', // green-500
         error: '#ef4444',   // red-500
@@ -47,4 +50,4 @@ export default {
     },
   },
   plugins: [],
-} 
+}

@@ -48,7 +48,7 @@ const Home: React.FC = () => {
           <Link to={item.url} key={item.url} className="block">
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-8 flex flex-col items-center text-center h-full">
               {/* 这里可以根据item.url或者其他属性来决定显示不同的图标 */}
-              <img src="/vite.svg" alt={item.label} className="w-16 h-16 mb-4" />
+              <img src="/logo.png" alt={item.label} className="w-16 h-16 mb-4" />
               <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">{item.label}</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm">
                 {item.description}

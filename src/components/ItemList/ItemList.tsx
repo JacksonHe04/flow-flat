@@ -25,8 +25,6 @@ interface ItemListProps {
   createButtonLink: string;
   /** 项目链接生成函数 */
   getItemLink: (id: string) => string;
-  /** 预览图占位文本 */
-  previewPlaceholder?: string;
 }
 
 /**
@@ -38,8 +36,7 @@ const ItemList: React.FC<ItemListProps> = ({
   items,
   createButtonText,
   createButtonLink,
-  getItemLink,
-  previewPlaceholder = '预览图'
+  getItemLink
 }) => {
   return (
     <div className="p-8">
@@ -83,14 +80,7 @@ const ItemList: React.FC<ItemListProps> = ({
                 border border-slate-200 dark:border-slate-700
               "
             >
-              <div className="
-                aspect-video
-                bg-slate-100 dark:bg-slate-700
-                flex items-center justify-center
-                text-slate-400 dark:text-slate-500
-              ">
-                {previewPlaceholder}
-              </div>
+
               <div className="p-4">
                 <h3 className="
                   text-lg font-medium

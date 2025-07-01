@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   ReactFlow,
   type Node as FlowNode,
@@ -20,6 +21,7 @@ import '@xyflow/react/dist/style.css';
 import Toolbar from '@/components/Toolbar/Toolbar';
 import CustomNode from '@/components/Node/NodeLayout/Node';
 import { useNodeStore } from '@/stores/nodeStore';
+import { useStorageStore } from '@/stores/storageStore';
 import { getDefaultNodeType } from '@/config/nodeTypes';
 
 // 定义自定义节点类型
@@ -31,10 +33,13 @@ const nodeTypes: NodeTypes = {
  * 内部Board组件，使用useReactFlow hook
  */
 const BoardInner: React.FC = () => {
-  const { nodes: storeNodes, addNode, removeNode, updateNodePosition } = useNodeStore();
+  const { id: boardId } = useParams<{ id: string }>();
+  const { nodes: storeNodes, addNode, removeNode, updateNodePosition, clearNodes } = useNodeStore();
+  const { loadBoard, currentBoardId, setCurrentBoardId } = useStorageStore();
   const { screenToFlowPosition, setViewport } = useReactFlow();
   const [lastClickTime, setLastClickTime] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   // 将store中的节点转换为React Flow节点格式
   const convertToReactFlowNodes = useCallback(() => {
@@ -60,6 +65,46 @@ const BoardInner: React.FC = () => {
   useEffect(() => {
     setNodes(convertToReactFlowNodes());
   }, [storeNodes, convertToReactFlowNodes, setNodes]);
+
+  // 加载白板数据
+  useEffect(() => {
+    const loadBoardData = async () => {
+      if (!boardId || boardId === 'new') {
+        // 新建白板或无效ID，清空当前数据
+        if (currentBoardId) {
+          clearNodes();
+          setCurrentBoardId(null);
+        }
+        return;
+      }
+
+      // 如果已经是当前白板，不需要重新加载
+      if (currentBoardId === boardId) {
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const boardData = await loadBoard(boardId);
+        if (boardData) {
+          // 清空当前节点
+          clearNodes();
+          // 加载新的节点数据
+          boardData.nodes.forEach(node => {
+            addNode(node);
+          });
+          // 设置边数据
+          setEdges(boardData.edges);
+        }
+      } catch (error) {
+        console.error('Failed to load board:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBoardData();
+  }, [boardId, currentBoardId, loadBoard, clearNodes, addNode, setEdges, setCurrentBoardId]);
 
   // 初始化画布，设置默认缩放为100%
   useEffect(() => {
@@ -152,6 +197,14 @@ const BoardInner: React.FC = () => {
 
   return (
     <div className="fixed inset-0 top-16 bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
+      {isLoading && (
+        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center z-50">
+          <div className="flex items-center space-x-3 bg-white dark:bg-slate-800 px-6 py-4 rounded-lg shadow-lg">
+            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <span className="text-gray-700 dark:text-gray-300">加载白板中...</span>
+          </div>
+        </div>
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}

@@ -72,6 +72,10 @@ interface NodeActions {
    * 清空选择
    */
   clearSelection: () => void;
+  /**
+   * 清空所有节点
+   */
+  clearNodes: () => void;
 }
 
 /**
@@ -124,6 +128,11 @@ export const useNodeStore = create<NodeState & NodeActions>()(immer((set) => ({
   }),
 
   clearSelection: () => set((state) => {
+    state.selectedNodeIds = [];
+  }),
+
+  clearNodes: () => set((state) => {
+    state.nodes = {};
     state.selectedNodeIds = [];
   }),
 })));

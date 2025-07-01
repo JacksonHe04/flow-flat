@@ -70,17 +70,17 @@ export const ImportExportButtons: React.FC<ImportExportButtonsProps> = ({
     <div className="flex gap-2">
       <button
         onClick={handleExport}
-        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        className="btn btn-outline btn-sm hover-lift transition-natural"
         title="导出节点数据"
       >
-        导出
+        📤 导出
       </button>
       <button
         onClick={handleImport}
-        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+        className="btn btn-outline btn-sm hover-lift transition-natural"
         title="导入节点数据"
       >
-        导入
+        📥 导入
       </button>
     </div>
   );

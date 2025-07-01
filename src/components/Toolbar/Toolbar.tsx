@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useReactFlow, type Edge } from '@xyflow/react';
+import { useReactFlow } from '@xyflow/react';
 import { useNodeStore } from '../../stores/nodeStore';
 import { nodeTypes, type NodeTypeConfig } from '@/config/nodeTypes';
-import { ImportExportButtons } from '@/components/Node/ImportExport';
+import StorageManager from '@/components/Storage/StorageManager';
 
 interface ToolbarProps {
   onDeleteSelected: () => void;
-  edges?: Edge[];
-  onEdgesChange?: (edges: Edge[]) => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected, edges, onEdgesChange }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
   const { addNode } = useNodeStore();
   const { zoomIn, zoomOut, fitView, getZoom, screenToFlowPosition } = useReactFlow();
   const [zoom, setZoom] = useState(getZoom());
@@ -87,12 +85,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected, edges, onEdgesChang
   };
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-white/20 dark:border-slate-700/50 shadow-lg">
+    <div className="flex items-center gap-3 px-6 py-3 rounded-xl backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border border-white/20 dark:border-slate-700/50 shadow-lg hover-lift transition-natural">
       {/* 节点类型选择器 */}
       <div className="relative node-type-selector">
         <button
           onClick={() => setShowNodeTypeMenu(!showNodeTypeMenu)}
-          className="btn btn-outline btn-sm flex items-center gap-2 min-w-[120px] justify-between"
+          className="btn btn-outline btn-sm flex items-center gap-2 min-w-[120px] justify-between hover-scale transition-natural focus-ring"
         >
           <div className="flex items-center gap-2">
              <span>{selectedNodeType.icon}</span>
@@ -103,16 +101,16 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected, edges, onEdgesChang
         
         {/* 下拉菜单 */}
         {showNodeTypeMenu && (
-          <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-50 min-w-[160px]">
+          <div className="absolute top-full left-0 mt-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-white/20 dark:border-slate-700/50 rounded-xl shadow-lg z-50 min-w-[160px] transition-natural">
             {nodeTypes.map((nodeType) => (
               <button
                 key={nodeType.id}
                 onClick={() => handleSelectNodeType(nodeType)}
                 className={`
-                  w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-slate-700
-                  flex items-center gap-2 text-sm
-                  ${selectedNodeType.id === nodeType.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-                  first:rounded-t-lg last:rounded-b-lg
+                  w-full px-4 py-3 text-left hover:bg-white/60 dark:hover:bg-slate-700/60
+                  flex items-center gap-3 text-sm transition-natural hover-lift
+                  ${selectedNodeType.id === nodeType.id ? 'bg-primary/10 text-primary border-l-2 border-primary' : ''}
+                  first:rounded-t-xl last:rounded-b-xl
                 `}
               >
                 <span>{nodeType.icon}</span>
@@ -127,45 +125,48 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected, edges, onEdgesChang
       
       <button
         onClick={handleAddNode}
-        className="btn btn-primary btn-sm"
+        className="btn btn-primary btn-sm hover-scale transition-natural focus-ring"
       >
-        添加节点
+        ➕ 添加节点
       </button>
       <button
         onClick={onDeleteSelected}
-        className="btn btn-error btn-sm"
+        className="btn btn-error btn-sm hover-scale transition-natural focus-ring"
       >
-        删除节点
+        🗑️ 删除节点
       </button>
       
       {/* 分隔线 */}
-      <div className="w-px h-6 bg-neutral-300 dark:bg-slate-600" />
+      <div className="divider w-px h-6 bg-neutral-300/60 dark:bg-slate-600/60" />
       
-      {/* 导入导出按钮 */}
-      <ImportExportButtons edges={edges} onEdgesChange={onEdgesChange} />
+      {/* 存储管理 */}
+      <StorageManager />
       
       {/* 分隔线 */}
-      <div className="w-px h-6 bg-neutral-300 dark:bg-slate-600" />
+      <div className="divider w-px h-6 bg-neutral-300/60 dark:bg-slate-600/60" />
       
       <button
         onClick={() => zoomOut()}
-        className="btn btn-outline btn-sm w-8 h-8 p-0 flex items-center justify-center"
+        className="btn btn-outline btn-sm w-9 h-9 p-0 flex items-center justify-center hover-scale transition-natural focus-ring"
+        title="缩小"
       >
-        -
+        −
       </button>
-      <span className="min-w-[3rem] text-center text-sm text-neutral-600 dark:text-slate-400 font-medium">
+      <span className="min-w-[4rem] text-center text-sm text-neutral-600 dark:text-slate-400 font-medium px-2 py-1 rounded-md bg-white/50 dark:bg-slate-700/50">
         {Math.round(zoom * 100)}%
       </span>
       <button
         onClick={() => zoomIn()}
-        className="btn btn-outline btn-sm w-8 h-8 p-0 flex items-center justify-center"
+        className="btn btn-outline btn-sm w-9 h-9 p-0 flex items-center justify-center hover-scale transition-natural focus-ring"
+        title="放大"
       >
         +
       </button>
-      <div className="w-px h-6 bg-neutral-300 dark:bg-slate-600" />
+      <div className="divider w-px h-6 bg-neutral-300/60 dark:bg-slate-600/60" />
       <button
         onClick={handleResetCanvas}
-        className="btn btn-outline btn-sm"
+        className="btn btn-outline btn-sm hover-scale transition-natural focus-ring"
+        title="自适应画布大小"
       >
         自适应大小
       </button>

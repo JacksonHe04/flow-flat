@@ -172,8 +172,6 @@ const BoardInner: React.FC = () => {
         <Panel position="top-center">
           <Toolbar 
             onDeleteSelected={handleDeleteSelected} 
-            edges={edges}
-            onEdgesChange={setEdges}
           />
         </Panel>
       </ReactFlow>

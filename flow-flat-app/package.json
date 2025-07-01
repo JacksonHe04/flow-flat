@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@flow-flat/core": "link:../package",
     "@monaco-editor/react": "^4.6.0",
     "@tiptap/core": "^2.23.0",
     "@tiptap/extension-code-block-lowlight": "^2.23.0",

@@ -19,25 +19,25 @@ const Home: React.FC = () => {
         集成白板｜Markdown｜Code Editor 等工具
         </p>
         <div className="flex justify-center space-x-4">
-          <a
-            href="board/new"
+          <Link
+            to="/board/new"
             className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
             Try Now
-          </a>
-          <a
-            href="/docs"
+          </Link>
+          <Link
+            to="/docs"
             className="bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
           >
             Quickstart
-          </a>
-          <a
-            href="https://github.com/JacksonHe04/flow-flat"
+          </Link>
+          <Link
+            to="https://github.com/JacksonHe04/flow-flat"
             className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
             target="_blank"
           >
             GitHub
-          </a>
+          </Link>
         </div>
       </div>
 

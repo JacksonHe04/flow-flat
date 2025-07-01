@@ -25,6 +25,8 @@ interface ItemListProps {
   createButtonLink: string;
   /** 项目链接生成函数 */
   getItemLink: (id: string) => string;
+  /** 预览占位符文本 */
+  previewPlaceholder: string;
 }
 
 /**
@@ -36,7 +38,8 @@ const ItemList: React.FC<ItemListProps> = ({
   items,
   createButtonText,
   createButtonLink,
-  getItemLink
+  getItemLink,
+  previewPlaceholder
 }) => {
   return (
     <div className="p-8">
@@ -95,6 +98,12 @@ const ItemList: React.FC<ItemListProps> = ({
                   text-slate-500 dark:text-slate-400
                 ">
                   最后编辑：{new Date(item.updatedAt).toLocaleString()}
+                </p>
+                <p className="
+                  mt-2 text-xs
+                  text-slate-400 dark:text-slate-500
+                ">
+                  {previewPlaceholder}
                 </p>
               </div>
             </Link>

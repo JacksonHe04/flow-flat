@@ -209,7 +209,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
               whitespace-nowrap
             "
           >
-            另存为
+            创建副本
           </button>
         )}
         

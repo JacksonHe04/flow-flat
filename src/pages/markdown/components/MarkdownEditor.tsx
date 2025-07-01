@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { EditorContent } from '@tiptap/react';
-import { useRichTextEditor } from './hooks';
-import { getEditorClassName, getThemeClassName, getEditorTheme } from './styles';
-import { ToolbarContainer, type ToolbarConfig } from './Toolbar';
-import { getPageExtensions, getPagePreviewExtensions } from './extensions';
+import { useRichTextEditor } from '@/components/Markdown/hooks';
+import { getEditorClassName, getThemeClassName, getEditorTheme } from '@/components/Markdown/styles';
+import { ToolbarContainer, type ToolbarConfig } from '@/components/Markdown/Toolbar';
+import { getPageExtensions, getPagePreviewExtensions } from '@/components/Markdown/extensions';
 
 /**
  * MarkdownEditor组件Props接口

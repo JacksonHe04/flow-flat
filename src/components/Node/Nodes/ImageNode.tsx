@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
-import NodeContainer from './NodeContainer';
-import NodeHeader from './NodeHeader';
+import NodeContainer from '../NodeLayout/NodeContainer';
+import NodeHeader from '../NodeLayout/NodeHeader';
 
 interface ImageNodeData extends Record<string, unknown> {
   title?: string;

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useReactFlow } from '@xyflow/react';
+import { useReactFlow, type Edge } from '@xyflow/react';
 import { useNodeStore } from '../../stores/nodeStore';
 import { nodeTypes, type NodeTypeConfig } from '@/config/nodeTypes';
+import { ImportExportButtons } from '@/components/Node/ImportExport';
 
 interface ToolbarProps {
   onDeleteSelected: () => void;
+  edges?: Edge[];
+  onEdgesChange?: (edges: Edge[]) => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected, edges, onEdgesChange }) => {
   const { addNode } = useNodeStore();
   const { zoomIn, zoomOut, fitView, getZoom, screenToFlowPosition } = useReactFlow();
   const [zoom, setZoom] = useState(getZoom());
@@ -134,7 +137,16 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
       >
         删除节点
       </button>
+      
+      {/* 分隔线 */}
       <div className="w-px h-6 bg-neutral-300 dark:bg-slate-600" />
+      
+      {/* 导入导出按钮 */}
+      <ImportExportButtons edges={edges} onEdgesChange={onEdgesChange} />
+      
+      {/* 分隔线 */}
+      <div className="w-px h-6 bg-neutral-300 dark:bg-slate-600" />
+      
       <button
         onClick={() => zoomOut()}
         className="btn btn-outline btn-sm w-8 h-8 p-0 flex items-center justify-center"

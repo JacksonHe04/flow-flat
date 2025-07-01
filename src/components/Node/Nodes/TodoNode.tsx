@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
-import NodeContainer from './NodeContainer';
-import NodeHeader from './NodeHeader';
+import NodeContainer from '../NodeLayout/NodeContainer';
+import NodeHeader from '../NodeLayout/NodeHeader';
 
 interface TodoItem {
   id: string;
@@ -67,17 +67,21 @@ const TodoNode: React.FC<NodeProps<Node<TodoNodeData>>> = ({ id, data, selected 
    * 切换待办事项完成状态
    */
   const toggleTodo = useCallback((todoId: string) => {
-    setTodos(prev => prev.map(todo => 
+    const newTodos = todos.map(todo => 
       todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-    ));
-  }, []);
+    );
+    setTodos(newTodos);
+    updateNodeData(id, { title, todos: newTodos });
+  }, [id, title, todos, updateNodeData]);
 
   /**
    * 删除待办事项
    */
   const deleteTodo = useCallback((todoId: string) => {
-    setTodos(prev => prev.filter(todo => todo.id !== todoId));
-  }, []);
+    const newTodos = todos.filter(todo => todo.id !== todoId);
+    setTodos(newTodos);
+    updateNodeData(id, { title, todos: newTodos });
+  }, [id, title, todos, updateNodeData]);
 
   /**
    * 编辑待办事项文本

@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
-import NodeContainer from './NodeContainer';
-import NodeHeader from './NodeHeader';
+import NodeContainer from '../NodeLayout/NodeContainer';
+import NodeHeader from '../NodeLayout/NodeHeader';
 import MarkdownNodeEditor from '@/components/Markdown/MarkdownNodeEditor';
 
 interface MarkdownNodeData extends Record<string, unknown> {

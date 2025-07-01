@@ -3,8 +3,8 @@ import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
 import MonacoEditor from '@/components/CodeEditor/MonacoEditor';
 import LanguageSelector from '@/components/CodeEditor/LanguageSelector';
-import NodeContainer from './NodeContainer';
-import NodeHeader from './NodeHeader';
+import NodeContainer from '../NodeLayout/NodeContainer';
+import NodeHeader from '../NodeLayout/NodeHeader';
 
 interface CodeNodeData extends Record<string, unknown> {
   title?: string;
@@ -19,7 +19,7 @@ interface CodeNodeData extends Record<string, unknown> {
 const CodeNode: React.FC<NodeProps<Node<CodeNodeData>>> = ({ id, data, selected }) => {
   const { updateNodeData } = useNodeStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [code, setCode] = useState(data?.content || '// 双击编辑代码\nconsole.log("Hello World!");');
+  const [code, setCode] = useState(data?.content || '\nconsole.log("Hello World!");');
   const [title, setTitle] = useState(data?.title || '代码节点');
   const [language, setLanguage] = useState(data?.language || 'javascript');
   const [isCompact, setIsCompact] = useState(true);
@@ -41,7 +41,9 @@ const CodeNode: React.FC<NodeProps<Node<CodeNodeData>>> = ({ id, data, selected 
    */
   const handleCodeChange = useCallback((newCode: string) => {
     setCode(newCode);
-  }, []);
+    // 立即保存到store中
+    updateNodeData(id, { content: newCode, title, language });
+  }, [id, title, language, updateNodeData]);
 
   /**
    * 处理语言变化

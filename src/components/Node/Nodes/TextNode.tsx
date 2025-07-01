@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { type NodeProps, type Node } from '@xyflow/react';
 import { useNodeStore } from '@/stores/nodeStore';
-import NodeContainer from './NodeContainer';
-import NodeHeader from './NodeHeader';
+import NodeContainer from '../NodeLayout/NodeContainer';
+import NodeHeader from '../NodeLayout/NodeHeader';
 
 interface TextNodeData extends Record<string, unknown> {
   title?: string;
@@ -16,7 +16,7 @@ interface TextNodeData extends Record<string, unknown> {
 const TextNode: React.FC<NodeProps<Node<TextNodeData>>> = ({ id, data, selected }) => {
   const { updateNodeData } = useNodeStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(data?.content || '双击编辑文本');
+  const [text, setText] = useState(data?.content || '');
   const [title, setTitle] = useState(data?.title || '文本节点');
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
@@ -82,7 +82,7 @@ const TextNode: React.FC<NodeProps<Node<TextNodeData>>> = ({ id, data, selected 
           className="w-full flex-1 whitespace-pre-wrap dark:text-white cursor-text"
           onDoubleClick={handleDoubleClick}
         >
-          {text}
+          {text || <span className="text-gray-400">双击编辑文本</span>}
         </div>
       )}
     </NodeContainer>

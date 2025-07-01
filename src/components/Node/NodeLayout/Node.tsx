@@ -1,11 +1,11 @@
 import React from 'react';
 import { type NodeProps, type Node as FlowNode } from '@xyflow/react';
 import { getNodeTypeById } from '@/config/nodeTypes';
-import TextNode from './TextNode';
-import CodeNode from './CodeNode';
-import ImageNode from './ImageNode';
-import MarkdownNode from './MarkdownNode';
-import TodoNode from './TodoNode';
+import TextNode from '../Nodes/TextNode';
+import CodeNode from '../Nodes/CodeNode';
+import ImageNode from '../Nodes/ImageNode';
+import MarkdownNode from '../Nodes/MarkdownNode';
+import TodoNode from '../Nodes/TodoNode';
 
 interface NodeData extends Record<string, unknown> {
   nodeType?: string;

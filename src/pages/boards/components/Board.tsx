@@ -14,10 +14,11 @@ import {
   type NodeTypes,
   useReactFlow,
   ReactFlowProvider,
+  type Edge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import Toolbar from '@/components/Toolbar/Toolbar';
-import CustomNode from '@/components/Node/Node';
+import CustomNode from '@/components/Node/NodeLayout/Node';
 import { useNodeStore } from '@/stores/nodeStore';
 import { getDefaultNodeType } from '@/config/nodeTypes';
 
@@ -53,7 +54,7 @@ const BoardInner: React.FC = () => {
   }, [storeNodes, removeNode]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(convertToReactFlowNodes());
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   // 同步store节点到React Flow节点
   useEffect(() => {
@@ -169,7 +170,11 @@ const BoardInner: React.FC = () => {
         />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} className="bg-slate-100 dark:bg-slate-800" />
         <Panel position="top-center">
-          <Toolbar onDeleteSelected={handleDeleteSelected} />
+          <Toolbar 
+            onDeleteSelected={handleDeleteSelected} 
+            edges={edges}
+            onEdgesChange={setEdges}
+          />
         </Panel>
       </ReactFlow>
     </div>

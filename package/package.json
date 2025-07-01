@@ -1,0 +1,61 @@
+{
+  "name": "@flow-flat/core",
+  "version": "1.0.0",
+  "description": "Flow Flat - A flexible node-based whiteboard component library",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "react",
+    "whiteboard",
+    "flow",
+    "nodes",
+    "diagram",
+    "canvas"
+  ],
+  "author": "Flow Flat Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@xyflow/react": "^12.3.4",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@tiptap/core": "^2.23.0",
+    "@tiptap/extension-code-block-lowlight": "^2.23.0",
+    "@tiptap/extension-mention": "^2.23.0",
+    "@tiptap/extension-placeholder": "^2.23.0",
+    "@tiptap/extension-typography": "^2.23.0",
+    "@tiptap/pm": "^2.23.0",
+    "@tiptap/react": "^2.23.0",
+    "@tiptap/starter-kit": "^2.23.0",
+    "date-fns": "^4.1.0",
+    "immer": "^10.1.1",
+    "lowlight": "^3.3.0",
+    "lucide-react": "^0.525.0",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "monaco-editor": "^0.52.2",
+    "rollup": "^4.0.0",
+    "rollup-plugin-dts": "^6.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.8.1",
+    "typescript": "~5.8.3"
+  }
+}

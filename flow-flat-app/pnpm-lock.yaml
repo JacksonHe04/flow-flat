@@ -44,6 +44,9 @@ importers:
       '@xyflow/react':
         specifier: ^12.3.4
         version: 12.8.1(@types/react@19.1.7)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      custom-react-flow-node:
+        specifier: link:../package-custom-react-flow-node
+        version: link:../package-custom-react-flow-node
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0

@@ -8,6 +8,7 @@ import MarkdownEditor from '@/pages/markdown/components/MarkdownEditor';
 import CodeList from '@/pages/code';
 import CodeEditor from '@/pages/code/components/CodeEditor';
 import Docs from '@/pages/docs';
+import { DemoBoard, TestBoard } from '@/components/Node/custom-react-flow-node-test-demo';
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,16 @@ export const router = createBrowserRouter([
       {
         path: '/docs',
         element: <Docs />,
+      },
+      // demo
+      {
+        path: 'demo',
+        element: <DemoBoard />
+      },
+      // test
+      {
+        path: '/test',
+        element: <TestBoard />,
       },
     ],
   },

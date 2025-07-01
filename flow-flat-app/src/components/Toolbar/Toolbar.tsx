@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { useNodeStore } from '../../stores/nodeStore';
+import { useNodeStore } from '@/stores/nodeStore';
 import { nodeTypes, type NodeTypeConfig } from '@/config/nodeTypes';
+import { getRegisteredNodeTypes } from '@/components/Node/custom-react-flow-node-test-demo';
 import StorageManager from '@/components/Storage/StorageManager';
 
 interface ToolbarProps {
@@ -12,8 +13,39 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
   const { addNode } = useNodeStore();
   const { zoomIn, zoomOut, fitView, getZoom, screenToFlowPosition } = useReactFlow();
   const [zoom, setZoom] = useState(getZoom());
+  const [availableNodeTypes, setAvailableNodeTypes] = useState<NodeTypeConfig[]>(nodeTypes);
   const [selectedNodeType, setSelectedNodeType] = useState<NodeTypeConfig>(nodeTypes[0]);
   const [showNodeTypeMenu, setShowNodeTypeMenu] = useState(false);
+
+  // 获取已注册的节点类型
+  useEffect(() => {
+    const registeredTypes = getRegisteredNodeTypes();
+    const dynamicNodeTypes: NodeTypeConfig[] = [];
+    
+    // 将已注册的节点类型转换为 NodeTypeConfig 格式
+    Object.keys(registeredTypes).forEach(nodeType => {
+      // 先从静态配置中查找
+      const staticConfig = nodeTypes.find(config => config.id === nodeType);
+      if (staticConfig) {
+        dynamicNodeTypes.push(staticConfig);
+      } else {
+        // 如果静态配置中没有，创建默认配置
+        dynamicNodeTypes.push({
+          id: nodeType,
+          name: nodeType.charAt(0).toUpperCase() + nodeType.slice(1) + '节点',
+          description: `自定义${nodeType}节点`,
+          icon: '🔧',
+          color: '#6b7280',
+          defaultSize: { width: 200, height: 150 }
+        });
+      }
+    });
+    
+    setAvailableNodeTypes(dynamicNodeTypes);
+    if (dynamicNodeTypes.length > 0) {
+      setSelectedNodeType(dynamicNodeTypes[0]);
+    }
+  }, []);
 
   // 监听缩放变化
   useEffect(() => {
@@ -102,7 +134,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
         {/* 下拉菜单 */}
         {showNodeTypeMenu && (
           <div className="absolute top-full left-0 mt-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-white/20 dark:border-slate-700/50 rounded-xl shadow-lg z-50 min-w-[160px] transition-natural">
-            {nodeTypes.map((nodeType) => (
+            {availableNodeTypes.map((nodeType) => (
               <button
                 key={nodeType.id}
                 onClick={() => handleSelectNodeType(nodeType)}

@@ -19,7 +19,8 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import Toolbar from '@/components/Toolbar/Toolbar';
-import CustomNode from '@/components/Node/NodeLayout/Node';
+// import CustomNode from '@/components/Node/NodeLayout/Node';
+import { NodeLayoutReplacement as CustomNode } from '@/components/Node/custom-react-flow-node-test-demo';
 import { useNodeStore } from '@/stores/nodeStore';
 import { useStorageStore } from '@/stores/storageStore';
 import { getDefaultNodeType } from '@/config/nodeTypes';

@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/flow-flat-app/(.*)",
-      "destination": "/flow-flat-app/index.html"
-    }
-  ]
-}

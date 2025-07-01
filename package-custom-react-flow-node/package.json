@@ -1,6 +1,6 @@
 {
   "name": "custom-react-flow-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A customizable React Flow node component library",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",

@@ -6,8 +6,7 @@
 import { type Edge } from '@xyflow/react';
 import { type Node } from '@/stores/nodeStore';
 import { indexedDBUtil, type BoardData, type BoardListItem } from '@/utils/indexedDB';
-import { exportFlowDataToJSON } from '@/components/Node/ImportExport/exportUtils';
-import { validateImportData } from '@/components/Node/ImportExport/importUtils';
+import { exportFlowDataToJSON, validateImportData } from '@/utils/importExportAdapter';
 
 /**
  * 保存白板请求参数
@@ -40,18 +39,44 @@ class BoardStorageService {
   async saveBoard(request: SaveBoardRequest): Promise<string> {
     const { name, description, nodes, edges, boardId } = request;
     
+    console.log('SaveBoard called with:', { name, description, nodesCount: nodes?.length, edgesCount: edges?.length, boardId });
+    console.log('Actual nodes data:', nodes);
+    console.log('Actual edges data:', edges);
+    
+    // 验证输入参数
+    if (!Array.isArray(nodes)) {
+      console.error('Nodes is not an array:', typeof nodes, nodes);
+      throw new Error('Nodes must be an array');
+    }
+    
+    if (!Array.isArray(edges)) {
+      console.error('Edges is not an array:', typeof edges, edges);
+      throw new Error('Edges must be an array');
+    }
+    
     // 生成白板ID
     const id = boardId || `board-${Date.now()}`;
     const now = new Date().toISOString();
     
-    // 将节点数组转换为对象格式
-    const nodesRecord = nodes.reduce((acc, node) => {
-      acc[node.id] = node;
-      return acc;
-    }, {} as Record<string, Node>);
-    
+    // 移除节点数据中的不可序列化部分（如函数）
+    const sanitizedNodes = nodes.map(node => {
+      const newData = { ...node.data };
+      delete (newData as any).onDataChange;
+      delete (newData as any).onDelete;
+      return {
+        ...node,
+        data: newData,
+      };
+    });
+
     // 使用现有的导出工具生成标准格式数据
-    const exportData = exportFlowDataToJSON(nodesRecord, edges);
+    const exportData = exportFlowDataToJSON(
+      sanitizedNodes.reduce((acc, node) => {
+        acc[node.id] = node;
+        return acc;
+      }, {} as Record<string, Node>),
+      edges
+    );
     
     // 构建白板数据
     const boardData: BoardData = {
@@ -66,6 +91,15 @@ class BoardStorageService {
       createdAt: boardId ? (await this.getBoard(boardId))?.createdAt || now : now,
       updatedAt: now,
     };
+    
+    console.log('Final boardData to save:', {
+      boardId: boardData.boardId,
+      name: boardData.name,
+      nodesCount: boardData.nodes?.length,
+      edgesCount: boardData.edges?.length,
+      actualNodes: boardData.nodes,
+      actualEdges: boardData.edges
+    });
     
     // 验证数据格式
     this.validateBoardData(boardData);

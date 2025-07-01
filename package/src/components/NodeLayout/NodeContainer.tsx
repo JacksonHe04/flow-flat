@@ -38,6 +38,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         type="target" 
         position={Position.Left} 
         id="input" 
+        isConnectable={true}
         style={{
           width: '16px',
           height: '16px',
@@ -49,6 +50,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         type="source" 
         position={Position.Right} 
         id="output" 
+        isConnectable={true}
         style={{
           width: '16px',
           height: '16px',

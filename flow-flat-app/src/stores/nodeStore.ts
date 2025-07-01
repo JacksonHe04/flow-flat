@@ -22,7 +22,7 @@ export interface Size {
  */
 export interface Node {
   id: string;
-  type: 'component' | 'code' | 'richtext' | 'customNode';
+  type: string; // 支持任意节点类型
   position: Position;
   size: Size;
   data: Record<string, unknown>;

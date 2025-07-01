@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCodeStore } from '@/stores/codeStore';
-import MonacoEditor from '@/components/CodeEditor/MonacoEditor';
-import LanguageSelector from '@/components/CodeEditor/LanguageSelector';
+import { MonacoEditor, LanguageSelector } from '@flow-flat/core';
 import { Save, ArrowLeft, Download, Copy, RotateCcw } from 'lucide-react';
 
 /**

@@ -35,6 +35,7 @@ const BoardInner: React.FC<BoardProps> = ({
   onNodeAdd,
   onNodeDelete,
   onNodeDataChange,
+  onConnect,
   className = '',
 }) => {
   const { screenToFlowPosition, setViewport } = useReactFlow();
@@ -86,13 +87,27 @@ const BoardInner: React.FC<BoardProps> = ({
   /**
    * 处理节点连接
    */
-  const onConnect: OnConnect = useCallback(
+  const handleConnect: OnConnect = useCallback(
     (params) => {
+      console.log('BoardInner onConnect called with params:', params);
+      // 确保连接参数有效
+      if (!params.source || !params.target) {
+        console.error('Invalid connection parameters:', params);
+        return;
+      }
+      
       const newEdges = addEdge(params, edges);
       setEdges(newEdges);
-      onExternalEdgesChange?.(newEdges);
+      
+      // 调用外部的onConnect回调
+      if (onConnect) {
+        onConnect(params);
+      } else {
+        // 如果没有提供外部onConnect回调，则使用onExternalEdgesChange
+        onExternalEdgesChange?.(newEdges);
+      }
     },
-    [edges, setEdges, onExternalEdgesChange]
+    [edges, setEdges, onExternalEdgesChange, onConnect]
   );
 
   /**
@@ -191,7 +206,7 @@ const BoardInner: React.FC<BoardProps> = ({
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
-        onConnect={onConnect}
+        onConnect={handleConnect}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         className="bg-slate-50 dark:bg-slate-900"

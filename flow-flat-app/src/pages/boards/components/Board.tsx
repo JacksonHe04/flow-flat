@@ -1,74 +1,68 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  ReactFlow,
-  type Node as FlowNode,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  type OnConnect,
-  Controls,
-  MiniMap,
-  Background,
-  BackgroundVariant,
-  Panel,
-  type NodeTypes,
-  useReactFlow,
-  ReactFlowProvider,
-  type Edge,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import Toolbar from '@/components/Toolbar/Toolbar';
-import CustomNode from '@/components/Node/NodeLayout/Node';
-import { useNodeStore } from '@/stores/nodeStore';
+import { Board as FlowFlatBoard, type FlowFlatNode, type BoardProps } from '@flow-flat/core';
+import { type Edge, ReactFlowProvider, applyEdgeChanges, type EdgeChange } from '@xyflow/react';
+import StorageManager from '@/components/Storage/StorageManager';
+import { useNodeStore, type Node } from '@/stores/nodeStore';
 import { useStorageStore } from '@/stores/storageStore';
-import { getDefaultNodeType } from '@/config/nodeTypes';
-
-// 定义自定义节点类型
-const nodeTypes: NodeTypes = {
-  customNode: CustomNode,
-};
 
 /**
- * 内部Board组件，使用useReactFlow hook
+ * Board组件
  */
-const BoardInner: React.FC = () => {
+const Board: React.FC = () => {
   const { id: boardId } = useParams<{ id: string }>();
   const { nodes: storeNodes, addNode, removeNode, updateNodePosition, clearNodes } = useNodeStore();
-  const { loadBoard, currentBoardId, setCurrentBoardId } = useStorageStore();
-  const { screenToFlowPosition, setViewport } = useReactFlow();
-  const [lastClickTime, setLastClickTime] = useState(0);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const { loadBoard, currentBoardId, setCurrentBoardId, init, isInitialized } = useStorageStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [edges, setEdges] = useState<unknown[]>([]);
   
-  // 将store中的节点转换为React Flow节点格式
-  const convertToReactFlowNodes = useCallback(() => {
+  // 将store中的节点转换为FlowFlatNode格式
+  const { updateNodeData } = useNodeStore();
+
+  const convertToFlowFlatNodes = useCallback((): FlowFlatNode[] => {
     return Object.values(storeNodes).map(node => ({
       id: node.id,
-      type: node.type,
+      type: node.data.nodeType as string || 'text',
       position: node.position,
+      size: node.size,
       data: {
         ...node.data,
         onDelete: () => removeNode(node.id),
-      },
-      style: {
-        width: node.size.width,
-        height: node.size.height,
+        onDataChange: (nodeId: string, newData: unknown) => {
+          updateNodeData(nodeId, newData as Record<string, unknown>);
+        },
       },
     }));
-  }, [storeNodes, removeNode]);
+  }, [storeNodes, removeNode, updateNodeData]);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(convertToReactFlowNodes());
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const flowFlatNodes = convertToFlowFlatNodes();
 
-  // 同步store节点到React Flow节点
+  // 初始化存储
   useEffect(() => {
-    setNodes(convertToReactFlowNodes());
-  }, [storeNodes, convertToReactFlowNodes, setNodes]);
+    const initializeStorage = async () => {
+      if (!isInitialized) {
+        try {
+          console.log('Initializing storage in Board component...');
+          await init();
+          console.log('Storage initialized successfully in Board component');
+        } catch (error) {
+          console.error('Failed to initialize storage in Board component:', error);
+        }
+      }
+    };
+
+    initializeStorage();
+  }, [init, isInitialized]);
 
   // 加载白板数据
   useEffect(() => {
     const loadBoardData = async () => {
+      // 确保存储已初始化
+      if (!isInitialized) {
+        console.log('Storage not initialized yet, waiting...');
+        return;
+      }
+
       if (!boardId || boardId === 'new') {
         // 新建白板或无效ID，清空当前数据
         if (currentBoardId) {
@@ -85,115 +79,142 @@ const BoardInner: React.FC = () => {
 
       setIsLoading(true);
       try {
+        console.log('Loading board data for ID:', boardId);
         const boardData = await loadBoard(boardId);
         if (boardData) {
+          console.log('Loaded board data:', boardData);
+          console.log('Nodes to load:', boardData.nodes);
+          console.log('Edges to load:', boardData.edges);
+          
           // 清空当前节点
           clearNodes();
+          // 设置当前白板ID
+          setCurrentBoardId(boardId);
+          
           // 加载新的节点数据
-          boardData.nodes.forEach(node => {
+          boardData.nodes.forEach((node, index) => {
+            console.log(`Adding node ${index + 1}/${boardData.nodes.length}:`, node);
             addNode(node);
           });
+          
           // 设置边数据
-          setEdges(boardData.edges);
+          setEdges(boardData.edges as Edge[]);
+          
+          console.log('Board data loaded successfully:', boardId);
+          console.log('Current store nodes after loading:', storeNodes);
+        } else {
+          console.warn('No board data found for ID:', boardId);
         }
       } catch (error) {
         console.error('Failed to load board:', error);
+        alert(`加载白板失败: ${error instanceof Error ? error.message : '未知错误'}`);
       } finally {
         setIsLoading(false);
       }
     };
 
     loadBoardData();
-  }, [boardId, currentBoardId, loadBoard, clearNodes, addNode, setEdges, setCurrentBoardId]);
+  }, [boardId, currentBoardId, loadBoard, clearNodes, addNode, setEdges, setCurrentBoardId, isInitialized]);
 
-  // 初始化画布，设置默认缩放为100%
-  useEffect(() => {
-    if (!isInitialized) {
-      // 设置默认缩放为100%（1.0）
-      setViewport({ x: 0, y: 0, zoom: 1 });
-      setIsInitialized(true);
+  /**
+   * 处理添加节点
+   */
+  const handleNodeAdd = useCallback((node: FlowFlatNode) => {
+    console.log('Adding node:', node);
+    console.log('Current board ID:', currentBoardId);
+    
+    // 如果当前没有白板ID，说明是新白板，需要设置一个临时ID
+    if (!currentBoardId && boardId && boardId !== 'new') {
+      setCurrentBoardId(boardId);
     }
-  }, [setViewport, isInitialized]);
-
-  /**
-   * 处理节点连接
-   */
-  const onConnect: OnConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
-  /**
-   * 处理节点拖拽结束，更新store中的位置
-   */
-  const onNodeDragStop = useCallback(
-    (_event: React.MouseEvent, node: FlowNode) => {
-      updateNodePosition(node.id, node.position);
-    },
-    [updateNodePosition]
-  );
-
-  /**
-   * 处理画布点击，检测双击创建节点
-   */
-  const onPaneClick = useCallback(
-    (event: React.MouseEvent) => {
-      const currentTime = Date.now();
-      const timeDiff = currentTime - lastClickTime;
-      
-      // 检测双击（300ms内的两次点击）
-      if (timeDiff < 300 && timeDiff > 0) {
-        // 使用 screenToFlowPosition 获取正确的流程图坐标
-        const position = screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
-        });
-
-        const defaultNodeType = getDefaultNodeType();
-        const newNode = {
-          id: `node-${Date.now()}`,
-          type: 'customNode' as const,
-          position,
-          size: { width: 200, height: 150 },
-          data: { 
-            nodeType: defaultNodeType.id,
-            title: defaultNodeType.name,
-            content: defaultNodeType.description 
-          },
-        };
-
-        addNode(newNode);
-        setLastClickTime(0); // 重置点击时间
-      } else {
-        setLastClickTime(currentTime);
-      }
-    },
-    [addNode, screenToFlowPosition, lastClickTime]
-  );
-
-  /**
-   * 处理删除选中节点
-   */
-  const handleDeleteSelected = useCallback(() => {
-    nodes.forEach(node => {
-      // React Flow 节点的 selected 属性
-      if ('selected' in node && node.selected) {
-        removeNode(node.id);
-      }
-    });
-  }, [nodes, removeNode]);
-
-  // 键盘快捷键支持
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        handleDeleteSelected();
-      }
+    
+    const storeNode: Node = {
+      id: node.id,
+      type: node.type, // 保持原始节点类型
+      position: node.position,
+      size: node.size || { width: 200, height: 150 },
+      data: {
+        nodeType: node.type,
+        ...node.data,
+      },
     };
+    addNode(storeNode);
+    console.log('Node added to store:', storeNode);
+  }, [addNode, currentBoardId, boardId, setCurrentBoardId]);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDeleteSelected]);
+  /**
+   * 处理删除节点
+   */
+  const handleNodeDelete = useCallback((nodeId: string) => {
+    removeNode(nodeId);
+  }, [removeNode]);
+
+  /**
+   * 处理节点数据变化
+   */
+  const handleNodeDataChange = useCallback((nodeId: string, newData: unknown) => {
+    updateNodeData(nodeId, newData as Record<string, unknown>);
+  }, [updateNodeData]);
+
+  /**
+   * 处理节点变化（位置、选择等）
+   */
+  const handleNodesChange = useCallback((changes: unknown[]) => {
+    console.log('Nodes changes received:', changes);
+    changes.forEach((change: unknown) => {
+      const changeObj = change as Record<string, unknown>;
+      if (changeObj.type === 'position' && changeObj.position) {
+        updateNodePosition(changeObj.id as string, changeObj.position as { x: number; y: number });
+      }
+      // 处理其他类型的变化，如选择状态等
+      console.log('Processing node change:', changeObj);
+    });
+  }, [updateNodePosition]);
+
+  /**
+   * 处理边变化
+   */
+  const handleEdgesChange = useCallback((changes: EdgeChange[]) => {
+    console.log('Edges changed:', changes);
+    
+    // 使用React Flow的applyEdgeChanges来处理边变化
+    setEdges(currentEdges => {
+      const newEdges = applyEdgeChanges(changes, currentEdges);
+      console.log('Updated edges state:', newEdges);
+      return newEdges;
+    });
+  }, [setEdges]);
+
+  /**
+   * 处理连接创建
+   * @param connection - 连接参数
+   */
+  const handleConnect = useCallback((connection: unknown) => {
+    console.log('Connection created:', connection);
+    
+    // 确保连接参数包含必要的属性
+    if (!connection || typeof connection !== 'object') {
+      console.error('Invalid connection parameters:', connection);
+      return;
+    }
+    
+    const connectionObj = connection as Record<string, unknown>;
+    if (!connectionObj.source || !connectionObj.target) {
+      console.error('Connection missing source or target:', connection);
+      return;
+    }
+    
+    setEdges(currentEdges => {
+      const newEdge = {
+        ...connectionObj,
+        id: `edge-${Date.now()}`,
+      } as Edge;
+      const newEdges = [...currentEdges, newEdge];
+      console.log('New edge added via connection:', newEdge);
+      console.log('All edges after connection:', newEdges);
+      return newEdges;
+    });
+  }, [setEdges]);
 
   return (
     <div className="fixed inset-0 top-16 bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
@@ -205,41 +226,26 @@ const BoardInner: React.FC = () => {
           </div>
         </div>
       )}
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeDragStop={onNodeDragStop}
-        onPaneClick={onPaneClick}
-        nodeTypes={nodeTypes}
-        className="bg-slate-50 dark:bg-slate-900"
-      >
-        <Controls className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
-        <MiniMap 
-          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
-          nodeColor="#10b981"
-        />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} className="bg-slate-100 dark:bg-slate-800" />
-        <Panel position="top-center">
-          <Toolbar 
-            onDeleteSelected={handleDeleteSelected} 
+      <ReactFlowProvider>
+        <div className="relative w-full h-full">
+          <FlowFlatBoard
+            nodes={flowFlatNodes}
+            edges={edges as Edge[]}
+            onNodeAdd={handleNodeAdd}
+            onNodeDelete={handleNodeDelete}
+            onNodeDataChange={handleNodeDataChange}
+            onNodesChange={handleNodesChange}
+            onEdgesChange={handleEdgesChange}
+            onConnect={handleConnect}
+            className="w-full h-full"
           />
-        </Panel>
-      </ReactFlow>
+          {/* 存储管理面板 */}
+          <div className="absolute top-4 right-4 z-10">
+            <StorageManager />
+          </div>
+        </div>
+      </ReactFlowProvider>
     </div>
-  );
-};
-
-/**
- * Board组件包装器，提供ReactFlowProvider上下文
- */
-const Board: React.FC = () => {
-  return (
-    <ReactFlowProvider>
-      <BoardInner />
-    </ReactFlowProvider>
   );
 };
 

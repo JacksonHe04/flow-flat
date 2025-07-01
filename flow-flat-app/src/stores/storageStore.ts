@@ -148,9 +148,7 @@ export const useStorageStore = create<StorageState & StorageActions>((set, get) 
   loadBoard: async (boardId: string) => {
     try {
       const result = await boardStorageService.loadBoard(boardId);
-      if (result) {
-        set({ currentBoardId: boardId });
-      }
+      // 不在这里设置currentBoardId，由调用方负责设置
       return result;
     } catch (error) {
       console.error('Failed to load board:', error);

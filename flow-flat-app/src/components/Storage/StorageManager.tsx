@@ -11,7 +11,7 @@ import { boardStorageService } from '@/services/boardStorage';
 import { useNodeStore } from '@/stores/nodeStore';
 import SaveBoardDialog from './SaveBoardDialog';
 import BoardListDialog from './BoardListDialog';
-import { importFlowData } from '@/components/Node/ImportExport/importUtils';
+import { importFlowData } from '@/utils/importExportAdapter';
 
 interface StorageManagerProps {
   className?: string;
@@ -44,6 +44,17 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
       const edges = getEdges();
       const nodes = Object.values(storeNodes);
       
+      console.log('HandleSave called with:', {
+        name,
+        description,
+        nodesCount: nodes.length,
+        edgesCount: edges.length,
+        nodesType: typeof nodes,
+        edgesType: typeof edges,
+        isNodesArray: Array.isArray(nodes),
+        isEdgesArray: Array.isArray(edges)
+      });
+      
       const newBoardId = await saveBoard({
         name,
         description,
@@ -51,6 +62,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
         edges,
       });
       
+      console.log('Board saved successfully with ID:', newBoardId);
       setShowSaveDialog(false);
       
       // 如果是新建白板（当前没有boardId），保存成功后跳转到新白板页面
@@ -59,7 +71,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
       }
     } catch (error) {
       console.error('Failed to save board:', error);
-      // TODO: 显示错误提示
+      alert(`保存失败: ${error instanceof Error ? error.message : '未知错误'}`);
     }
   };
 
@@ -76,10 +88,21 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
         const currentBoard = await boardStorageService.getBoard(currentBoardId);
         if (!currentBoard) {
           console.error('Current board not found');
+          alert('当前白板不存在，无法更新');
           return;
         }
         
         const storeNodesArray = Object.values(storeNodes);
+        
+        console.log('HandleUpdate called with:', {
+          boardId: currentBoardId,
+          name: currentBoard.name,
+          description: currentBoard.description,
+          nodesCount: storeNodesArray.length,
+          edgesCount: edges.length,
+          isNodesArray: Array.isArray(storeNodesArray),
+          isEdgesArray: Array.isArray(edges)
+        });
         
         await saveBoard({
           boardId: currentBoardId,
@@ -88,10 +111,13 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
           nodes: storeNodesArray,
           edges,
         });
+        
+        console.log('Board updated successfully:', currentBoardId);
+        alert('白板更新成功！');
       }
     } catch (error) {
       console.error('Failed to update board:', error);
-      // TODO: 显示错误提示
+      alert(`更新失败: ${error instanceof Error ? error.message : '未知错误'}`);
     }
   };
 
@@ -123,7 +149,10 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
     setIsImporting(true);
     
     try {
-      const result = await importFlowData(file);
+      // 获取现有节点数据
+      const existingNodesRecord = storeNodes;
+      
+      const result = await importFlowData(file, existingNodesRecord);
       
       // 直接加载到画布
       setNodes(result.nodes);

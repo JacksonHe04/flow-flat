@@ -91,6 +91,7 @@ export interface BoardProps {
   onNodeDataChange?: (nodeId: string, data: any) => void;
   onNodesChange?: (changes: any[]) => void;
   onEdgesChange?: (changes: any[]) => void;
+  onConnect?: (connection: any) => void;
   showToolbar?: boolean;
   showControls?: boolean;
   showMiniMap?: boolean;

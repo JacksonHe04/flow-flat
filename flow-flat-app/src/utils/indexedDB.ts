@@ -109,16 +109,40 @@ class IndexedDBUtil {
    * 保存白板数据
    */
   async saveBoard(boardData: BoardData): Promise<void> {
+    console.log('IndexedDB saveBoard called with:', {
+      boardId: boardData.boardId,
+      name: boardData.name,
+      nodesCount: boardData.nodes?.length,
+      edgesCount: boardData.edges?.length
+    });
+    console.log('IndexedDB full boardData:', boardData);
+    console.log('IndexedDB nodes array:', boardData.nodes);
+    console.log('IndexedDB edges array:', boardData.edges);
+    
     const db = await this.ensureDB();
     
     return new Promise((resolve, reject) => {
       const transaction = db.transaction([STORE_NAME], 'readwrite');
       const store = transaction.objectStore(STORE_NAME);
       
+      transaction.onerror = (event) => {
+        console.error('Transaction error:', event);
+        const target = event.target as IDBTransaction;
+        reject(new Error(`Transaction failed: ${target?.error?.message || 'Unknown error'}`));
+      };
+      
       const request = store.put(boardData);
       
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(new Error('Failed to save board'));
+      request.onsuccess = () => {
+        console.log('Board saved successfully:', boardData.boardId);
+        resolve();
+      };
+      
+      request.onerror = (event) => {
+        const target = event.target as IDBRequest;
+        console.error('Save request error:', event, target?.error);
+        reject(new Error(`Failed to save board: ${target?.error?.message || 'Unknown error'}`));
+      };
     });
   }
 

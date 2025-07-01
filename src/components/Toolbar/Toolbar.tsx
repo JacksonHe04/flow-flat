@@ -127,13 +127,13 @@ const Toolbar: React.FC<ToolbarProps> = ({ onDeleteSelected }) => {
         onClick={handleAddNode}
         className="btn btn-primary btn-sm hover-scale transition-natural focus-ring"
       >
-        ➕ 添加节点
+        +
       </button>
       <button
         onClick={onDeleteSelected}
         className="btn btn-error btn-sm hover-scale transition-natural focus-ring"
       >
-        🗑️ 删除节点
+        -
       </button>
       
       {/* 分隔线 */}

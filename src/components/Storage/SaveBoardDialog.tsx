@@ -109,7 +109,7 @@ const SaveBoardDialog: React.FC<SaveBoardDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed top-80 inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
         {/* 标题 */}
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">

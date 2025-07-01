@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useReactFlow } from '@xyflow/react';
 import { useStorageStore } from '@/stores/storageStore';
 import { boardStorageService } from '@/services/boardStorage';
@@ -24,6 +25,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
   const [showBoardList, setShowBoardList] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   
+  const navigate = useNavigate();
   const { getEdges, setNodes, setEdges } = useReactFlow();
   const { nodes: storeNodes } = useNodeStore();
   const {
@@ -42,7 +44,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
       const edges = getEdges();
       const nodes = Object.values(storeNodes);
       
-      await saveBoard({
+      const newBoardId = await saveBoard({
         name,
         description,
         nodes,
@@ -50,6 +52,11 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
       });
       
       setShowSaveDialog(false);
+      
+      // 如果是新建白板（当前没有boardId），保存成功后跳转到新白板页面
+      if (!currentBoardId && newBoardId) {
+        navigate(`/board/${newBoardId}`);
+      }
     } catch (error) {
       console.error('Failed to save board:', error);
       // TODO: 显示错误提示
@@ -97,6 +104,8 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
       if (boardData) {
         setNodes(boardData.nodes);
         setEdges(boardData.edges);
+        // 跳转到对应的白板页面
+        navigate(`/board/${boardId}`);
       }
     } catch (error) {
       console.error('Failed to load board:', error);
@@ -178,7 +187,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
             bg-blue-50 dark:bg-blue-900/20
             hover:bg-blue-100 dark:hover:bg-blue-900/40
             disabled:opacity-50 disabled:cursor-not-allowed
-            flex items-center space-x-1
+            flex items-center space-x-1 whitespace-nowrap
           `}
         >
           {saveStatus === 'saving' && (
@@ -197,6 +206,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
               bg-purple-50 dark:bg-purple-900/20
               hover:bg-purple-100 dark:hover:bg-purple-900/40
               transition-colors duration-200
+              whitespace-nowrap
             "
           >
             另存为
@@ -212,6 +222,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
             bg-gray-50 dark:bg-gray-700
             hover:bg-gray-100 dark:hover:bg-gray-600
             transition-colors duration-200
+            whitespace-nowrap
           "
         >
           我的白板
@@ -224,7 +235,7 @@ const StorageManager: React.FC<StorageManagerProps> = ({ className = '' }) => {
           bg-green-50 dark:bg-green-900/20
           hover:bg-green-100 dark:hover:bg-green-900/40
           transition-colors duration-200
-          flex items-center space-x-1
+          flex items-center space-x-1 whitespace-nowrap
         ">
           {isImporting && (
             <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />

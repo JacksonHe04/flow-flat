@@ -18,6 +18,11 @@ const Home: React.FC = () => {
         <p className="text-lg text-slate-700 dark:text-slate-300 mb-8">
         集成白板｜Markdown｜Code Editor 等工具
         </p>
+        <div className="flex justify-center mb-8">
+          <a href="https://www.npmjs.com/package/custom-react-flow-node" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.shields.io/badge/npm-custom--react--flow--node-red?style=flat-square&logo=npm" alt="NPM Package" />
+          </a>
+        </div>
         <div className="flex justify-center space-x-4">
           <Link
             to="/board/new"
@@ -26,8 +31,9 @@ const Home: React.FC = () => {
             Try Now
           </Link>
           <Link
-            to="/docs"
+            to="https://www.npmjs.com/package/custom-react-flow-node"
             className="bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+            target="_blank"
           >
             Quickstart
           </Link>
